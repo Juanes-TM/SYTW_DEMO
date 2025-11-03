@@ -6,7 +6,7 @@ const app = express();
 const PORT = 3000;
 
 // Leer config externa (fuera del repo Git)
-const configPath = '/home/usuario/backend_config.json';
+const configPath = '/home/usuario/backend_config.json'; //Contiene la ip de la interfaz de red de la máquina
 const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
 
 const CLIENT_URL = config.CLIENT_URL;
