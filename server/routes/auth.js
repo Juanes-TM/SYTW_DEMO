@@ -135,7 +135,7 @@ router.post('/forgot-password', async (req, res) => {
 		usuario.resetPasswordExpires = new Date(expires);
 		await usuario.save();
 
-		const resetLink = 'http://172.16.0.1/reset-password?token=${token}&email=${encodeURIComponent(email)}';
+		const resetLink = "http://172.16.0.1/reset-password?token=" + token + "&email=" + encodeURIComponent(email);
 
 		// Devolvemos el enlace
 		return res.status(200).json({
@@ -173,7 +173,7 @@ router.post('/reset-password', async (req, res) => {
 
 		// Eliminamos campos de reset
 		usuario.resetPasswordToken = undefined;
-		usuario.resetPasswordExpire = undefined;
+		usuario.resetPasswordExpires = undefined;
 		await usuario.save();
 
 		return res.status(200).json({ msg: 'Contraseña actualizada correctamente' });
