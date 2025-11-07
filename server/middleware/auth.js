@@ -15,7 +15,7 @@ module.exports = function (req, res, next) {
 	const token = parts[1];
 	try {
 		const payload = jwt.verify(token, JWT_SECRET);
-		req.userID = payload.id;
+		req.userId = payload.id;
 		req.userRole = payload.rol;
 		next();
 	} catch (err) {
