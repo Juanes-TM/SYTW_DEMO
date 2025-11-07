@@ -3,9 +3,17 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import DashboardLayout from "./components/DashboardLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
-import PacienteDashboard from "./pages/dashboard/PacienteDashboard";
-import FisioDashboard from "./pages/dashboard/FisioDashboard";
-import AdminDashboard from "./pages/dashboard/AdminDashboard";
+
+// --- DASHBOARDS PRINCIPALES ---
+import PacienteDashboard from "./pages/dashboard/paciente/PacienteDashboard";
+import FisioDashboard from "./pages/dashboard/fisio/FisioDashboard";
+import AdminDashboard from "./pages/dashboard/admin/AdminDashboard";
+
+// --- SECCIONES INTERNAS ---
+import CitasIndex from "./pages/dashboard/paciente/citas/CitasIndex";
+import DisponibilidadPage from "./pages/dashboard/fisio/disponibilidad/DisponibilidadPage";
+import UsuariosPage from "./pages/dashboard/admin/usuarios/UsuariosPage";
+
 
 function App() {
   return (
@@ -15,7 +23,7 @@ function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
 
-      {/* Páginas privadas */}
+      {/* Dashboard protegido */}
       <Route
         path="/dashboard"
         element={
@@ -24,15 +32,18 @@ function App() {
           </ProtectedRoute>
         }
       >
-        {/* Ruta por defecto dentro del dashboard */}
-        <Route index element={<PacienteDashboard />} />
+        {/* --- PACIENTE --- */}
         <Route path="paciente" element={<PacienteDashboard />} />
-        <Route path="fisio" element={<FisioDashboard />} />
-        <Route path="admin" element={<AdminDashboard />} />
-      </Route>
+        <Route path="paciente/citas" element={<CitasIndex />} />
 
-      {/* Ruta 404 */}
-      <Route path="*" element={<h1>Página no encontrada</h1>} />
+        {/* --- FISIO --- */}
+        <Route path="fisio" element={<FisioDashboard />} />
+        <Route path="fisio/disponibilidad" element={<DisponibilidadPage />} />
+
+        {/* --- ADMIN --- */}
+        <Route path="admin" element={<AdminDashboard />} />
+        <Route path="admin/usuarios" element={<UsuariosPage />} />
+      </Route>
     </Routes>
   );
 }

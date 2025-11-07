@@ -3,15 +3,18 @@ import CitasPage from "./CitasPage";
 import CitasCalendar from "./CitasCalendar";
 
 function CitasIndex() {
+  // Extrae el usuario real del store
   const { user } = useSelector((state) => state.user);
+  const currentUser = user?.user || user; // Compatibilidad con ambas estructuras
 
-  if (!user) return <p className="p-6">No autorizado</p>;
+  if (!currentUser) return <p className="p-6">No autorizado</p>;
 
-  if (user.role === "patient") {
+  // Usa la propiedad "rol" real que viene del backend
+  if (currentUser.rol === "cliente") {
     return <CitasCalendar modo="paciente" />;
   }
 
-  if (user.role === "therapist") {
+  if (currentUser.rol === "fisioterapeuta") {
     return <CitasCalendar modo="fisio" />;
   }
 
