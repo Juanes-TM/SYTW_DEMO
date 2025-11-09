@@ -68,7 +68,7 @@ function LoginPage() {
         {/* ===== FORMULARIO DE LOGIN ===== */}
         <form onSubmit={handleLogin} className="space-y-4">
           <input
-            type="email"
+            type="text"
             placeholder="Correo"
             value={email}
             onChange={(e) => {

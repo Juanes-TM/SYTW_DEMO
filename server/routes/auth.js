@@ -15,6 +15,7 @@ const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
 // REGISTRO DE USUARIO
 // -------------------------
 router.post('/register', async (req, res) => {
+
   const { nombre, apellido, email, password, password2, telephone } = req.body;
 
   if (!nombre || !apellido || !email || !password || !password2 || !telephone) {

@@ -18,8 +18,9 @@ export default function RegisterPage() {
   // Validaciones nuevas
   const validate = () => {
 	  const newErrors = {};
-	  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
-		  newErrors.email = "Formato de correo inválido";
+	  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[A-Za-z]{2,}$/;
+    if (!emailRegex.test(formData.email))
+    newErrors.email = "Formato de correo inválido";
 
 	  if (formData.password.length < 6)
 		  newErrors.password = "La contraseña debe tener mínimo 6 caracteres";
@@ -110,7 +111,7 @@ export default function RegisterPage() {
           />
           <input
             name="email"
-            type="email"
+            type="text"
             placeholder="Correo electrónico"
             value={formData.email}
             onChange={handleChange}
