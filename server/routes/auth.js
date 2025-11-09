@@ -15,10 +15,31 @@ const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
 // REGISTRO DE USUARIO
 // -------------------------
 router.post('/register', async (req, res) => {
-  const { nombre, apellido, email, password, telephone } = req.body;
+  const { nombre, apellido, email, password, password2, telephone } = req.body;
 
-  if (!nombre || !apellido || !email || !password || !telephone) {
-    return res.status(400).json({ msg: 'Faltan datos' });
+  if (!nombre || !apellido || !email || !password || !password2 || !telephone) {
+    return res.status(400).json({ msg: 'Faltan datos, todos los campos son obligatorios' });
+  }
+  
+  // Comprobar formato del email
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+	  return res.status(400).json({ msg: 'Formato de email no válido' });
+  }
+
+  // Contraseña de longitud mínima 6
+  if (password.length < 6) {
+	  return res.status(400).json({ msg: 'La contraseña debe tener al menos 6 caracteres' });
+  }
+
+  // Repetir contraseña
+  if (password != password2) {
+	  return res.status(400).json({ msg: 'Las contraseñas no coinciden' });  }
+
+  // Teléfono válido (9 números)
+  const telRegex = /^[0-9]{9}$/
+  if (!telRegex.test(telephone)) {
+	  return res.status(400).json({ msg: 'El teléfono debe tener 9 dígitos'});
   }
 
   try {
@@ -57,9 +78,15 @@ router.post('/register', async (req, res) => {
 // -------------------------
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
+  
+  // Comprobar formato email
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!email || !emailRegex.test(email)) {
+	  return res.status(400).json({ msg: 'El email no tiene formato válido' });
+  }
 
-  if (!email || !password) {
-    return res.status(400).json({ msg: 'Faltan credenciales' });
+  if (!password) {
+	  return res.status(400).json({ msg: 'Por favor, introduce la contraseña' });
   }
 
   try {
@@ -135,7 +162,8 @@ router.post('/forgot-password', async (req, res) => {
 		usuario.resetPasswordExpires = new Date(expires);
 		await usuario.save();
 
-		const resetLink = "http://172.16.0.1/reset-password?token=" + token + "&email=" + encodeURIComponent(email);
+		//const resetLink = "http://172.16.0.1/reset-password?token=" + token + "&email=" + encodeURIComponent(email);
+    const resetLink = `http://172.16.0.1/reset-password?token=${token}&email=${encodeURIComponent(email)}`;
 
 		// Devolvemos el enlace
 		return res.status(200).json({

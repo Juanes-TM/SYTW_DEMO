@@ -8,20 +8,54 @@ export default function RegisterPage() {
     apellido: "",
     email: "",
     password: "",
+    password2: "",	  
     telephone: "",
   });
+  const [errors, setErrors] = useState({});	
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  // Validaciones nuevas
+  const validate = () => {
+	  const newErrors = {};
+	  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
+		  newErrors.email = "Formato de correo inválido";
+
+	  if (formData.password.length < 6)
+		  newErrors.password = "La contraseña debe tener mínimo 6 caracteres";
+	  if (formData.password !== formData.password2)
+		  newErrors.password2 = "Las contraseñas no coinciden";
+
+	  if (!/^[0-9]{9}$/.test(formData.telephone))
+		  newErrors.telephone = "Debe contener exactamente 9 dígitos";
+
+	  return newErrors;
+  };
+
+
+
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
+  
+  
+    setErrors({
+	  ...errors,
+	  [e.target.name]: "",
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+	    setErrors(validationErrors);
+	    return;
+    }
+
     setLoading(true);
 
     try {
@@ -37,6 +71,15 @@ export default function RegisterPage() {
       setLoading(false);
     }
   };
+  
+
+  // EStilo dinámico del input
+  const inputStyle = (field) =>
+	`w-full px-4 py-2 border rounded-md outline-none ${
+	errors[field]
+	? "border-red-500 focus:ring-2 focus:ring-red-400"
+	: "border-gray-300 focus:ring-2 focus:ring-teal-400"
+	}`;
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-teal-100 to-teal-300">
@@ -51,8 +94,9 @@ export default function RegisterPage() {
             placeholder="Nombre"
             value={formData.nombre}
             onChange={handleChange}
-            required
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-400 outline-none"
+	    className={inputStyle("nombre")}
+            //required
+            //className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-400 outline-none"
           />
           <input
             name="apellido"
@@ -60,8 +104,9 @@ export default function RegisterPage() {
             placeholder="Apellido"
             value={formData.apellido}
             onChange={handleChange}
-            required
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-400 outline-none"
+	    className={inputStyle("apellido")}
+            //required
+            //className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-400 outline-none"
           />
           <input
             name="email"
@@ -69,27 +114,47 @@ export default function RegisterPage() {
             placeholder="Correo electrónico"
             value={formData.email}
             onChange={handleChange}
-            required
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-400 outline-none"
+	    className={inputStyle("email")}
+            //required
+            //className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-400 outline-none"
           />
+	  {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+
           <input
             name="password"
             type="password"
             placeholder="Contraseña"
             value={formData.password}
             onChange={handleChange}
-            required
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-400 outline-none"
+	    className={inputStyle("password")}
+            //required
+            //className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-400 outline-none"
           />
+          {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+		
+          <input
+	    name="password2"
+	    type="password"
+	    placeholder="Repetir contraseña"
+	    value={formData.password2}
+	    onChange={handleChange}
+	    className={inputStyle("password2")}
+	  />
+          {errors.password2 && <p className="text-red-500 text-sm">{errors.password2}</p>}
+
+
           <input
             name="telephone"
             type="tel"
             placeholder="Teléfono"
             value={formData.telephone}
             onChange={handleChange}
-            required
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-400 outline-none"
+	    className={inputStyle("telephone")}
+            //required
+            //className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-400 outline-none"
           />
+          {errors.telephone && <p className="text-red-500 text-sm">{errors.telephone}</p>}
+
 
           <button
             type="submit"

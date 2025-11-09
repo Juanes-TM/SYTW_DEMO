@@ -7,11 +7,30 @@ import api from "../services/api";
 function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState({});
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const validate = () => {
+    const newErrors = {};
+
+    // email inválido
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+      newErrors.email = "Correo no válido";
+
+    if (!password)
+      newErrors.password = "Debes escribir tu contraseña";
+
+    return newErrors;
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
+    const validation = validate();
+    if (Object.keys(validation).length > 0) {
+      setErrors(validation);
+      return;
+    }
 
     try {
       const res = await api.post("/api/login", { email, password });
@@ -27,10 +46,19 @@ function LoginPage() {
       else if (user.rol === "fisioterapeuta") navigate("/dashboard/fisio");
       else navigate("/dashboard/paciente");
     } catch (err) {
-      alert("Credenciales incorrectas o error de conexión");
-      console.error(err);
+      setErrors({ general: err.response?.data?.message || "Credenciales incorrectas" });
+      {errors.general && <p className="text-red-500 text-sm">{errors.general}</p>}
     }
   };
+
+
+  const inputStyle = (fieldError) =>
+    `w-full px-4 py-2 border rounded-md outline-none ${
+      fieldError
+      ? "border-red-500 focus:ring-2 focus:ring-red-400"
+      : "border-gray-300 focus:ring-2 focus:ring-teal-400"
+    }`;
+
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-teal-100 to-teal-300">
@@ -43,16 +71,32 @@ function LoginPage() {
             type="email"
             placeholder="Correo"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-400 outline-none"
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setErrors({ ...errors, email: "" });
+            }}
+            className={inputStyle(errors.email)}
+            //className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-400 outline-none"
           />
+          {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+
+
           <input
             type="password"
             placeholder="Contraseña"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-400 outline-none"
+            onChange={(e) => {
+              setPassword(e.target.value);
+              setErrors({ ...errors, password: "" });
+            }}
+            className={inputStyle(errors.password)}
+            //className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-400 outline-none"
           />
+          {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+
+          {errors.general && (<p className="text-red-500 text-sm">{errors.general}</p>)}
+
+
           <button
             type="submit"
             className="w-full bg-teal-600 hover:bg-teal-700 text-white py-2 rounded-md font-semibold transition"
@@ -74,6 +118,7 @@ function LoginPage() {
           <button
             type="button"
             onClick={() => alert('Funcionalidad de recuperación de contraseña aun sin vincular')}
+            //onClick={() => navigate('/forgot-password')}
             className="text-gray-600 hover:underline"
           >
             ¿Olvidaste tu contraseña?
