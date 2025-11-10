@@ -213,22 +213,6 @@ router.post('/reset-password', async (req, res) => {
 });
 
 
-router.get("/profile", authMiddleware, async (req, res) => {
-  try {
-    const usuario = await User.findById(req.userId).select(
-      "-password -resetPasswordToken -resetPasswordExpires -__v"
-    );
-
-    if (!usuario)
-      return res.status(404).json({ msg: "Usuario no encontrado" });
-    return res.status(200).json({ user: usuario });
-
-  } catch (err) {
-    console.error("Error en /profile:", err);
-    return res.status(500).json({ msg: "Error en el servidor" });
-  }
-});
-
 // EXPORTAR EL ROUTER
 module.exports = router;
 
