@@ -6,7 +6,7 @@ export const useCitas = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get("/citas")
+    api.get("/api/citas")
       .then(res => setCitas(res.data))
       .catch(err => console.error("Error al cargar citas:", err))
       .finally(() => setLoading(false));

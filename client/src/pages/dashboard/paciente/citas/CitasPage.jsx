@@ -6,7 +6,7 @@ const CitasPage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get("/citas").then((res) => {
+    api.get("/api/citas").then((res) => {
       setCitas(res.data);
       setLoading(false);
     });

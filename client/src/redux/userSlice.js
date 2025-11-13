@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  user: null,
+  user: JSON.parse(localStorage.getItem("user")) || null,
 };
 
 const userSlice = createSlice({
@@ -10,13 +10,12 @@ const userSlice = createSlice({
   reducers: {
     loginSuccess: (state, action) => {
       state.user = action.payload;
-      // Guardar sesión en localStorage (persistencia)
-      localStorage.setItem("fisioUser", JSON.stringify(action.payload));
+      localStorage.setItem("user", JSON.stringify(action.payload));
     },
     logout: (state) => {
       state.user = null;
-      // Eliminar sesión persistida
-      localStorage.removeItem("fisioUser");
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
     },
   },
 });

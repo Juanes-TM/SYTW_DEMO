@@ -13,14 +13,9 @@ function LoginPage() {
 
   const validate = () => {
     const newErrors = {};
-
-    // email inválido
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
       newErrors.email = "Correo no válido";
-
-    if (!password)
-      newErrors.password = "Debes escribir tu contraseña";
-
+    if (!password) newErrors.password = "Debes escribir tu contraseña";
     return newErrors;
   };
 
@@ -36,66 +31,60 @@ function LoginPage() {
       const res = await api.post("/api/login", { email, password });
       const { user, token } = res.data;
 
-      // Guardar en Redux y en localStorage
-      dispatch(loginSuccess({ user, token }));
-      localStorage.setItem("token", token);
-      localStorage.setItem("userData", JSON.stringify(user));
+      // NORMALIZACIÓN UNIFICADA
+      const userPayload = {
+        user: {
+          _id: user._id,
+          nombre: user.nombre,
+          apellido: user.apellido,
+          email: user.email,
+          rol: user.rol,
+        },
+        token: token,
+      };
 
-      // Redirigir según rol
+      // Guardar en redux y storage
+      dispatch(loginSuccess(userPayload));
+      localStorage.setItem("fisioUser", JSON.stringify(userPayload));
+      localStorage.setItem("token", token);
+
+      // Redirigir
       if (user.rol === "admin") navigate("/dashboard/admin");
       else if (user.rol === "fisioterapeuta") navigate("/dashboard/fisio");
       else navigate("/dashboard/paciente");
+
     } catch (err) {
-      setErrors({ general: err.response?.data?.message || "Credenciales incorrectas" });
-      {errors.general && <p className="text-red-500 text-sm">{errors.general}</p>}
+      setErrors({
+        general: err.response?.data?.message || "Credenciales incorrectas",
+      });
     }
   };
-
-
-  const inputStyle = (fieldError) =>
-    `w-full px-4 py-2 border rounded-md outline-none ${
-      fieldError
-      ? "border-red-500 focus:ring-2 focus:ring-red-400"
-      : "border-gray-300 focus:ring-2 focus:ring-teal-400"
-    }`;
-
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-teal-100 to-teal-300">
       <div className="bg-white p-10 rounded-2xl shadow-2xl w-96 text-center">
         <h2 className="text-2xl font-semibold text-teal-700 mb-6">FisioTrack</h2>
 
-        {/* ===== FORMULARIO DE LOGIN ===== */}
         <form onSubmit={handleLogin} className="space-y-4">
           <input
             type="text"
             placeholder="Correo"
             value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-              setErrors({ ...errors, email: "" });
-            }}
-            className={inputStyle(errors.email)}
-            //className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-400 outline-none"
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md"
           />
           {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
-
 
           <input
             type="password"
             placeholder="Contraseña"
             value={password}
-            onChange={(e) => {
-              setPassword(e.target.value);
-              setErrors({ ...errors, password: "" });
-            }}
-            className={inputStyle(errors.password)}
-            //className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-400 outline-none"
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md"
           />
           {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
 
-          {errors.general && (<p className="text-red-500 text-sm">{errors.general}</p>)}
-
+          {errors.general && <p className="text-red-500 text-sm">{errors.general}</p>}
 
           <button
             type="submit"
@@ -105,20 +94,14 @@ function LoginPage() {
           </button>
         </form>
 
-        {/* ===== ENLACES DE REGISTRO Y RECUPERACIÓN ===== */}
         <div className="mt-4 text-sm flex flex-col items-center space-y-2">
-          <Link
-            to="/register"
-            className="text-teal-700 hover:underline"
-          >
+          <Link to="/register" className="text-teal-700 hover:underline">
             Crear una cuenta nueva
           </Link>
-          
-          {/* Este botón aún no tiene funcionalidad, FUTURO RECUPERAR CONTRASEÑA */}
+
           <button
             type="button"
-            onClick={() => alert('Funcionalidad de recuperación de contraseña aun sin vincular')}
-            //onClick={() => navigate('/forgot-password')}
+            onClick={() => alert("Funcionalidad no implementada")}
             className="text-gray-600 hover:underline"
           >
             ¿Olvidaste tu contraseña?
