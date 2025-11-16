@@ -29,6 +29,7 @@ mongoose.connect(MONGO_URI)
 const authRoutes = require('./routes/auth');
 const adminRoutes = require("./routes/admin");
 const citasRoutes = require('./routes/citas');
+const fisioRoutes = require("./routes/fisioterapeutas");
 
 // --- CAMBIO IMPORTANTE AQUÍ ---
 // Definimos primero las rutas específicas
@@ -53,3 +54,5 @@ app.get(/^(?!\/api).*/, (req, res) => {
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Servidor BACKEND escuchando en puerto ${PORT}`);
 });
+
+app.use("/api/fisioterapeutas", fisioRoutes);

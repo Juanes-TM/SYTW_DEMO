@@ -111,9 +111,11 @@ router.post('/login', async (req, res) => {
       msg: 'Inicio de sesión correcto',
       token,
       user: {
+        _id: usuario._id,
         nombre: usuario.nombre,
         apellido: usuario.apellido,
         email: usuario.email,
+        telephone: usuario.telephone,
         rol: usuario.rol
       }
     });

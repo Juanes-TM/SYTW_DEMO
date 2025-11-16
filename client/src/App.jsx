@@ -5,7 +5,8 @@ import DashboardLayout from "./components/DashboardLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PrivateRoute from "./routes/PrivateRoute";
 import ProfilePage from "./pages/ProfilePage";
-
+import ForgotPswPage from "./pages/ForgotPswPage";
+import ResetPswPage from "./pages/ForgotPswPage";   
 
 // --- DASHBOARDS PRINCIPALES ---
 import PacienteDashboard from "./pages/dashboard/paciente/PacienteDashboard";
@@ -26,7 +27,9 @@ function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/profile" element={<ProfilePage />} />
-
+      <Route path="/forgot-password" element={<ForgotPswPage />} />
+      <Route path="/reset-password" element={<ResetPswPage />} />
+      
       {/* Dashboard protegido general */}
       <Route
         path="/dashboard"

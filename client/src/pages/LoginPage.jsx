@@ -101,7 +101,7 @@ function LoginPage() {
 
           <button
             type="button"
-            onClick={() => alert("Funcionalidad no implementada")}
+            onClick={() => navigate("/forgot-password")}
             className="text-gray-600 hover:underline"
           >
             ¿Olvidaste tu contraseña?
