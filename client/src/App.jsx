@@ -6,7 +6,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import PrivateRoute from "./routes/PrivateRoute";
 import ProfilePage from "./pages/ProfilePage";
 import ForgotPswPage from "./pages/ForgotPswPage";
-import ResetPswPage from "./pages/ForgotPswPage";   
+import ResetPswPage from "./pages/ResetPswPage";   
 
 // --- DASHBOARDS PRINCIPALES ---
 import PacienteDashboard from "./pages/dashboard/paciente/PacienteDashboard";

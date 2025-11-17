@@ -1,13 +1,12 @@
+
 // client/src/pages/ResetPasswordPage.jsx
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import api from "../services/api";
 
 export default function ResetPasswordPage() {
   const navigate = useNavigate();
   const location = useLocation();
-
-  // Si venimos con state desde ForgotPassword, prefill token/email
   const prefillToken = location.state?.token || "";
   const prefillEmail = location.state?.email || "";
 
@@ -19,9 +18,9 @@ export default function ResetPasswordPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    // Si hubo token en state, limpiamos la history.state para evitar reenvío accidental
+    // si venimos con state, limpiarlo (opcional)
     if (prefillToken || prefillEmail) {
-      // opcional: replace para limpiar state visible en navegación
+      // replace para evitar volver con state al pulsar atrás
       navigate(location.pathname, { replace: true, state: {} });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -46,22 +45,18 @@ export default function ResetPasswordPage() {
     }
 
     try {
-      // Tu backend espera { email, token, newPassword }
       const res = await api.post("/api/reset-password", {
         email,
         token,
         newPassword: password
       });
 
-      setMsg(res.data.msg || "Contraseña restablecida con éxito");
-
-      setTimeout(() => {
-        navigate("/login");
-      }, 2000);
+      setMsg(res.data?.msg || "Contraseña restablecida correctamente");
+      setTimeout(() => navigate("/login"), 1800);
     } catch (err) {
       console.error("ResetPassword error:", err);
       const apiMsg = err.response?.data?.msg;
-      setError(apiMsg || "Error inesperado");
+      setError(apiMsg || "Error al restablecer la contraseña");
     }
   };
 

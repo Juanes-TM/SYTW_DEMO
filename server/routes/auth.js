@@ -154,7 +154,7 @@ router.post('/forgot-password', async (req, res) => {
 	try {
 		const usuario = await User.findOne({ email });
 		if (!usuario) {
-			return res.status(404).json({ msg: 'El correo no está registrado' });
+			return res.status(400).json({ msg: 'El correo no está registrado' });
 		}
 		// Generamos token seguro que expira en 1 hora
 		const token = crypto.randomBytes(32).toString('hex');
