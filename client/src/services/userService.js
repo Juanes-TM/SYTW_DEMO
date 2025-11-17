@@ -15,7 +15,8 @@ export async function updateProfile(data) {
     const res = await api.put("/api/profile/update", data);
     return { ok: true, user: res.data.user };
   } catch (err) {
-    console.error("Error updateProfile:", err.response?.data);
+    console.error("🔥 ERROR updateProfile COMPLETO:", err);   
+    console.error("🔥 RESPONSE:", err.response?.data);        
     return { ok: false, msg: err.response?.data?.msg || "Error desconocido" };
   }
 }

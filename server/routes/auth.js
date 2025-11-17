@@ -143,53 +143,24 @@ router.get('/profile', authMiddleware, async (req, res) => {
 
 
 // Editar perfil de usuario
-router.put("/profile/update", authMiddleware, async (req, res) => {
+router.put('/profile/update', authMiddleware, async (req, res) => {
   try {
-    console.log(">>> /api/profile/update called");
-    console.log("userId from middleware:", req.userId);
-    console.log("body:", req.body);
+    const userId = req.userId;
 
     const { nombre, apellido, telephone } = req.body;
 
-    if (!nombre || !apellido || !telephone) {
-      return res.status(400).json({ msg: "Todos los campos son obligatorios" });
-    }
+    const updated = await User.findByIdAndUpdate(
+      userId,
+      { nombre, apellido, telephone },
+      { new: true }
+    );
 
-    if (!/^[0-9]{9}$/.test(telephone)) {
-      return res.status(400).json({ msg: "El teléfono debe tener 9 dígitos" });
-    }
-
-    const usuario = await User.findById(req.userId);
-    if (!usuario) {
-      return res.status(404).json({ msg: "Usuario no encontrado" });
-    }
-
-    usuario.nombre = nombre.trim();
-    usuario.apellido = apellido.trim();
-    usuario.telephone = telephone;
-
-    await usuario.save();
-
-    return res.status(200).json({
-      msg: "Perfil actualizado correctamente",
-      user: {
-        nombre: usuario.nombre,
-        apellido: usuario.apellido,
-        email: usuario.email,
-        telephone: usuario.telephone,
-        rol: usuario.rol,
-      }
-    });
-
+    return res.status(200).json({ msg: 'Perfil actualizado', user: updated });
   } catch (err) {
-    console.error("Error actualizando perfil:", err);
-    return res.status(500).json({
-      msg: "Error interno del servidor",
-      error: err.message
-    });
+    console.error("Error en update:", err);
+    return res.status(500).json({ msg: "Error en el servidor" });
   }
 });
-
 
 
 

@@ -30,6 +30,7 @@ const authRoutes = require('./routes/auth');
 const adminRoutes = require("./routes/admin");
 const citasRoutes = require('./routes/citas');
 const fisioRoutes = require("./routes/fisioterapeutas");
+const profileRoutes = require('./routes/profile');
 
 // --- CAMBIO IMPORTANTE AQUÍ ---
 // Definimos primero las rutas específicas
@@ -38,7 +39,7 @@ app.use("/api/admin", adminRoutes); // Captura /api/admin
 
 // Definimos al final la ruta genérica /api (auth)
 app.use('/api', authRoutes);        // Captura el resto de /api (login, register)
-
+//app.use('/api/profile', profileRoutes);
 
 // ==================== FRONTEND (React compilado) ====================
 const CLIENT_DIST_PATH = path.join(__dirname, '../client/dist');
@@ -46,7 +47,7 @@ app.use(express.static(CLIENT_DIST_PATH));
 
 // --- EXPRESS 5 ---
 app.get(/^(?!\/api).*/, (req, res) => {
-  //if (req.path.startsWith('/api')) return next(); // no interceptar la api
+  if (req.path.startsWith("/api")) return();
   res.sendFile(path.join(CLIENT_DIST_PATH, 'index.html'));
 });
 
