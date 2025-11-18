@@ -25,29 +25,26 @@ mongoose.connect(MONGO_URI)
     process.exit(1);
   });
 
-// ==================== RUTAS API ====================
+// ==================== RUTAS BACKEND ====================
 const authRoutes = require('./routes/auth');
 const adminRoutes = require("./routes/admin");
 const citasRoutes = require('./routes/citas');
 const fisioRoutes = require("./routes/fisioterapeutas");
 const profileRoutes = require('./routes/profile');
 
-// --- CAMBIO IMPORTANTE AQUÍ ---
-// Definimos primero las rutas específicas
-app.use('/api/citas', citasRoutes); // Captura /api/citas
-app.use("/api/admin", adminRoutes); // Captura /api/admin
 
-// Definimos al final la ruta genérica /api (auth)
-app.use('/api', authRoutes);        // Captura el resto de /api (login, register)
-//app.use('/api/profile', profileRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/citas', citasRoutes);
+app.use('/api/fisioterapeutas', fisioRoutes);
+app.use('/api/profile', profileRoutes);   
+app.use('/api', authRoutes);              // login, register, forgot, reset, etc.
 
 // ==================== FRONTEND (React compilado) ====================
 const CLIENT_DIST_PATH = path.join(__dirname, '../client/dist');
 app.use(express.static(CLIENT_DIST_PATH));
 
-// --- EXPRESS 5 ---
+// --- FALLBACK SOLAMENTE PARA RUTAS *NO API* ---
 app.get(/^(?!\/api).*/, (req, res) => {
-  if (req.path.startsWith("/api")) return();
   res.sendFile(path.join(CLIENT_DIST_PATH, 'index.html'));
 });
 
@@ -55,5 +52,3 @@ app.get(/^(?!\/api).*/, (req, res) => {
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Servidor BACKEND escuchando en puerto ${PORT}`);
 });
-
-app.use("/api/fisioterapeutas", fisioRoutes);
