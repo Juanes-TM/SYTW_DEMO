@@ -1,13 +1,14 @@
 import { Routes, Route } from "react-router-dom";
+
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import DashboardLayout from "./components/DashboardLayout";
-import ProtectedRoute from "./components/ProtectedRoute";
 import PrivateRoute from "./routes/PrivateRoute";
+
 import ProfilePage from "./pages/ProfilePage";
-import ForgotPswPage from "./pages/ForgotPswPage";
-import ResetPswPage from "./pages/ResetPswPage";   
 import EditProfilePage from "./pages/EditProfilePage";
+import ForgotPswPage from "./pages/ForgotPswPage";
+import ResetPswPage from "./pages/ResetPswPage";
 
 // --- DASHBOARDS PRINCIPALES ---
 import PacienteDashboard from "./pages/dashboard/paciente/PacienteDashboard";
@@ -18,7 +19,7 @@ import AdminDashboard from "./pages/dashboard/admin/AdminDashboard";
 import CitasIndex from "./pages/dashboard/paciente/citas/CitasIndex";
 import DisponibilidadPage from "./pages/dashboard/fisio/disponibilidad/DisponibilidadPage";
 import UsuariosPage from "./pages/dashboard/admin/usuarios/UsuariosPage";
-
+import ReservarCitaPage from "./pages/dashboard/paciente/citas/ReservarCitaPage";
 
 function App() {
   return (
@@ -32,7 +33,6 @@ function App() {
       <Route path="/forgot-password" element={<ForgotPswPage />} />
       <Route path="/reset-password" element={<ResetPswPage />} />
 
-      
       {/* Dashboard protegido general */}
       <Route
         path="/dashboard"
@@ -45,6 +45,7 @@ function App() {
         {/* --- PACIENTE --- */}
         <Route path="paciente" element={<PacienteDashboard />} />
         <Route path="paciente/citas" element={<CitasIndex />} />
+        <Route path="paciente/reservar" element={<ReservarCitaPage />} />
 
         {/* --- FISIO --- */}
         <Route path="fisio" element={<FisioDashboard />} />
@@ -55,7 +56,7 @@ function App() {
         <Route path="admin/usuarios" element={<UsuariosPage />} />
       </Route>
 
-      {/*  Ruta protegida exclusiva para admins */}
+      {/* Ruta protegida exclusiva para admins (puedes mantenerla si la usas) */}
       <Route
         path="/dashboard/admin"
         element={

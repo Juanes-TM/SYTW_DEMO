@@ -1,3 +1,4 @@
+// client/src/hooks/useDisponibilidad.js
 import { useEffect, useState } from "react";
 import api from "../services/api";
 
@@ -8,15 +9,16 @@ export function useDisponibilidad(fisioId) {
   const token = localStorage.getItem("token");
 
   // ────────────────────────────────
-  // CARGAR SEMANA ✔
+  // CARGAR SEMANA
   // ────────────────────────────────
   useEffect(() => {
     if (!fisioId) return;
 
     const cargar = async () => {
       try {
+        // IMPORTANTE: /api/disponibilidad/...
         const res = await api.get(`/api/disponibilidad/semana/${fisioId}`, {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${token}` },
         });
         setSemana(res.data);
       } catch (err) {
@@ -30,25 +32,16 @@ export function useDisponibilidad(fisioId) {
   }, [fisioId]);
 
   // ────────────────────────────────
-  // GUARDAR SEMANA ✔
+  // GUARDAR SEMANA
   // ────────────────────────────────
   const guardarSemana = async (horarios) => {
     try {
-      const payload = {
-        fisio: fisioId,
-        dias: Object.entries(horarios).map(([nombre, horas]) => ({
-          nombre,
-          horas
-        }))
-      };
+      // El backend espera un objeto dias { lunes: [...], martes: [...], ... }
+      const payload = { dias: horarios };
 
-      const res = await api.put(
-        `/api/disponibilidad/semana`,
-        payload,
-        {
-          headers: { Authorization: `Bearer ${token}` }
-        }
-      );
+      const res = await api.put(`/api/disponibilidad/semana`, payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       setSemana(res.data.disponibilidad);
       return res;

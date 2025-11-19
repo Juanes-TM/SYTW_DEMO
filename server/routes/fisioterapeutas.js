@@ -7,7 +7,8 @@ const auth = require("../middleware/auth");
 router.get("/", auth, async (req, res) => {
   try {
     const fisios = await User.find({ rol: "fisioterapeuta" })
-      .select("nombre apellido email");
+      .select("_id nombre apellido email");
+
     res.json(fisios);
   } catch (err) {
     console.error(err);

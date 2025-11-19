@@ -4,80 +4,116 @@ const Cita = require("../models/cita");
 const User = require("../models/user");
 const auth = require("../middleware/auth");
 
-// ---------------------------------------------
-// Helper → comprobar solapamientos del fisio
-// ---------------------------------------------
+// ------------------------------
+// SOLAPAMIENTO
+// ------------------------------
 async function haySolapamiento(fisioId, startAt, endAt) {
   return await Cita.findOne({
     fisioterapeuta: fisioId,
     estado: { $ne: "cancelada" },
     $or: [
-      { startAt: { $lt: endAt }, endAt: { $gt: startAt } } // overlap condition
+      { startAt: { $lt: endAt }, endAt: { $gt: startAt } }
     ]
   }).lean();
 }
 
-// ---------------------------------------------
-// Crear nueva cita
-// ---------------------------------------------
+// ------------------------------
+// CREAR NUEVA CITA
+// ------------------------------
 router.post("/", auth, async (req, res) => {
-  const { fisioterapeutaId, startAt, durationMinutes, motivo, observaciones } = req.body;
-
-  if (!fisioterapeutaId || !startAt || !durationMinutes || !motivo) {
-    return res.status(400).json({ msg: "Faltan campos obligatorios" });
-  }
-
-  const start = new Date(startAt);
-  if (isNaN(start.getTime())) {
-    return res.status(400).json({ msg: "Fecha no válida" });
-  }
-
-  const duration = Number(durationMinutes);
-  if (!Number.isFinite(duration) || duration <= 0) {
-    return res.status(400).json({ msg: "Duración no válida" });
-  }
-
-  const end = new Date(start.getTime() + duration * 60 * 1000);
-
   try {
-    // validar fisio
+    let {
+      fisioterapeutaId,
+      startAt,
+      endAt,
+      durationMinutes,
+      motivo,
+      observaciones
+    } = req.body;
+
+    // Validaciones mínimas
+    if (!fisioterapeutaId || !startAt || !motivo) {
+      return res.status(400).json({ msg: "Faltan campos obligatorios" });
+    }
+
+    const start = new Date(startAt);
+    if (isNaN(start)) {
+      return res.status(400).json({ msg: "Fecha no válida" });
+    }
+
+    // Si viene endAt → calcular duración
+    let end;
+    if (endAt) {
+      end = new Date(endAt);
+      if (isNaN(end)) {
+        return res.status(400).json({ msg: "endAt no es válido" });
+      }
+      durationMinutes = Math.floor((end - start) / (60 * 1000));
+    }
+
+    // Si NO viene endAt pero sí durationMinutes → calcular end
+    else if (durationMinutes) {
+      const dur = Number(durationMinutes);
+      if (!Number.isFinite(dur) || dur <= 0) {
+        return res.status(400).json({ msg: "Duración no válida" });
+      }
+      end = new Date(start.getTime() + dur * 60000);
+    }
+
+    // Si no hay duración por ninguna vía
+    else {
+      return res.status(400).json({
+        msg: "Debes enviar endAt o durationMinutes"
+      });
+    }
+
+    // Validar fisio
     const fisio = await User.findById(fisioterapeutaId).lean();
-    if (!fisio) return res.status(404).json({ msg: "Fisioterapeuta no encontrado" });
+    if (!fisio) {
+      return res.status(404).json({ msg: "Fisioterapeuta no encontrado" });
+    }
 
     if (fisio.rol !== "fisioterapeuta" && req.userRole !== "admin") {
       return res.status(400).json({ msg: "El usuario no es un fisioterapeuta" });
     }
 
-    // solapamiento
+    // Comprobar solapamiento real
     const overlap = await haySolapamiento(fisioterapeutaId, start, end);
     if (overlap) {
-      return res.status(409).json({ msg: "El fisioterapeuta tiene otra cita en ese horario" });
+      return res.status(409).json({
+        msg: "El fisioterapeuta tiene otra cita en ese horario"
+      });
     }
 
+    // Crear cita
     const nueva = new Cita({
       paciente: req.userId,
       fisioterapeuta: fisioterapeutaId,
       startAt: start,
-      durationMinutes: duration,
       endAt: end,
-      createdBy: { user: req.userId, role: req.userRole },
+      durationMinutes,
       motivo,
       observaciones: observaciones || "",
-      estado: "pendiente"
+      estado: "pendiente",
+      createdBy: { user: req.userId, role: req.userRole }
     });
 
     await nueva.save();
-    return res.status(201).json({ msg: "Cita creada", cita: nueva });
+
+    res.status(201).json({
+      msg: "Cita creada correctamente",
+      cita: nueva
+    });
 
   } catch (err) {
     console.error("Error creando cita:", err);
-    return res.status(500).json({ msg: "Error del servidor" });
+    res.status(500).json({ msg: "Error del servidor" });
   }
 });
 
-// ---------------------------------------------
-// Obtener citas (según rol)
-// ---------------------------------------------
+// ------------------------------
+// LISTAR CITAS SEGÚN ROL
+// ------------------------------
 router.get("/", auth, async (req, res) => {
   try {
     let filtro = {};
@@ -100,9 +136,9 @@ router.get("/", auth, async (req, res) => {
   }
 });
 
-// ---------------------------------------------
-// Editar motivo / observaciones
-// ---------------------------------------------
+// ------------------------------
+// EDITAR MOTIVO / OBSERVACIONES
+// ------------------------------
 router.patch("/:id", auth, async (req, res) => {
   const { motivo, observaciones } = req.body;
 
@@ -110,31 +146,30 @@ router.patch("/:id", auth, async (req, res) => {
     const cita = await Cita.findById(req.params.id);
     if (!cita) return res.status(404).json({ msg: "Cita no encontrada" });
 
-    // solo admin o creador puede editar el motivo
+    // Motivo: solo admin o creador
     if (motivo) {
       if (req.userRole !== "admin" && cita.createdBy.user.toString() !== req.userId) {
-        return res.status(403).json({ msg: "No autorizado a cambiar el motivo" });
+        return res.status(403).json({ msg: "No autorizado" });
       }
       cita.motivo = motivo;
     }
 
-    // observaciones → cualquiera puede añadir (paciente/fisio/admin)
     if (observaciones) {
       cita.observaciones = observaciones;
     }
 
     await cita.save();
+    res.status(200).json({ msg: "Cita actualizada", cita });
 
-    return res.status(200).json({ msg: "Cita actualizada", cita });
   } catch (err) {
     console.error("Error actualizando cita:", err);
-    return res.status(500).json({ msg: "Error del servidor" });
+    res.status(500).json({ msg: "Error del servidor" });
   }
 });
 
-// ---------------------------------------------
-// Cambiar estado de la cita
-// ---------------------------------------------
+// ------------------------------
+// CAMBIAR ESTADO
+// ------------------------------
 router.put("/:id/estado", auth, async (req, res) => {
   const { estado } = req.body;
 
@@ -147,25 +182,18 @@ router.put("/:id/estado", auth, async (req, res) => {
     const cita = await Cita.findById(req.params.id);
     if (!cita) return res.status(404).json({ msg: "Cita no encontrada" });
 
-    // Permisos
-    // Paciente: solo cancelar sus propias citas
+    // Permisos según rol
     if (req.userRole === "cliente") {
-      if (estado !== "cancelada") {
-        return res.status(403).json({ msg: "No autorizado a cambiar a ese estado" });
-      }
-      if (cita.paciente.toString() !== req.userId) {
-        return res.status(403).json({ msg: "Solo puedes cancelar tus propias citas" });
+      if (estado !== "cancelada" || cita.paciente.toString() !== req.userId) {
+        return res.status(403).json({ msg: "No autorizado" });
       }
     }
 
-    // Fisio: solo gestionar sus citas
     if (req.userRole === "fisioterapeuta") {
       if (cita.fisioterapeuta.toString() !== req.userId) {
-        return res.status(403).json({ msg: "No puedes modificar citas de otros fisioterapeutas" });
+        return res.status(403).json({ msg: "No autorizado" });
       }
     }
-
-    // Admin: todo permitido
 
     cita.estado = estado;
     await cita.save();
