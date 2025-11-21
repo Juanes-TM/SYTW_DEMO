@@ -1,0 +1,356 @@
+{
+  "id": "27349e36-1371-4177-8f7a-7f1f655c1a8a",
+  "version": "2.0",
+  "name": "FisioSesion",
+  "url": "https://10.6.131.134",
+  "tests": [{
+    "id": "dcd62ef8-00d5-448c-9b3a-848be23ddd4e",
+    "name": "disponibilidad",
+    "commands": [{
+      "id": "e7684460-4468-4ba3-a2d5-9ec8ab5007a2",
+      "comment": "",
+      "command": "open",
+      "target": "/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "938bae78-705c-4f2c-a2d2-51503dc42934",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1854x1048",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "42f9a949-bf55-4d6f-930f-318f28d28630",
+      "comment": "",
+      "command": "click",
+      "target": "css=.w-full:nth-child(1)",
+      "targets": [
+        ["css=.w-full:nth-child(1)", "css:finder"],
+        ["xpath=//input[@value='']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/form/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "a9b3bd64-0d32-4db5-8838-e889ffa2a4ec",
+      "comment": "",
+      "command": "type",
+      "target": "css=.w-full:nth-child(1)",
+      "targets": [
+        ["css=.w-full:nth-child(1)", "css:finder"],
+        ["xpath=//input[@value='fisio1@ull.es']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/form/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "fisio1@ull.es"
+    }, {
+      "id": "5ecc655f-952a-4794-ae89-b19218abca55",
+      "comment": "",
+      "command": "click",
+      "target": "css=.w-full:nth-child(2)",
+      "targets": [
+        ["css=.w-full:nth-child(2)", "css:finder"],
+        ["xpath=//input[@value='']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/form/input[2]", "xpath:idRelative"],
+        ["xpath=//input[2]", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "b42c4e41-1509-4d46-add7-d5fbf139b586",
+      "comment": "",
+      "command": "type",
+      "target": "css=.w-full:nth-child(2)",
+      "targets": [
+        ["css=.w-full:nth-child(2)", "css:finder"],
+        ["xpath=//input[@value='123456']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/form/input[2]", "xpath:idRelative"],
+        ["xpath=//input[2]", "xpath:position"]
+      ],
+      "value": "123456"
+    }, {
+      "id": "a27c3aed-cc7e-4dd9-b451-8ebe5140927a",
+      "comment": "",
+      "command": "click",
+      "target": "css=.bg-teal-600",
+      "targets": [
+        ["css=.bg-teal-600", "css:finder"],
+        ["xpath=//button[@type='submit']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/form/button", "xpath:idRelative"],
+        ["xpath=//button", "xpath:position"],
+        ["xpath=//button[contains(.,'Iniciar sesión')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "7cda40f8-3d5d-4cb4-b2dd-fabeffde688f",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Disponibilidad",
+      "targets": [
+        ["linkText=Disponibilidad", "linkText"],
+        ["css=.block:nth-child(2)", "css:finder"],
+        ["xpath=//a[contains(text(),'Disponibilidad')]", "xpath:link"],
+        ["xpath=//div[@id='root']/div/aside/nav/a[2]", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/dashboard/fisio/disponibilidad')]", "xpath:href"],
+        ["xpath=//a[2]", "xpath:position"],
+        ["xpath=//a[contains(.,'Disponibilidad')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "fb9fcfdd-7fb6-4512-beb4-0f8d318a1725",
+      "comment": "",
+      "command": "click",
+      "target": "css=.border:nth-child(1) .text-sm",
+      "targets": [
+        ["css=.border:nth-child(1) .text-sm", "css:finder"],
+        ["xpath=//div[@id='root']/div/main/div/div/div/div/div/div/button", "xpath:idRelative"],
+        ["xpath=//div/div/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Añadir intervalo')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "26520a79-86b5-44b3-b1f2-e05575fd9ae0",
+      "comment": "",
+      "command": "click",
+      "target": "css=.ml-auto",
+      "targets": [
+        ["css=.ml-auto", "css:finder"],
+        ["xpath=//div[@id='root']/div/main/div/div/div/div/div/div[2]/div/button", "xpath:idRelative"],
+        ["xpath=//div[2]/div/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Quitar')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "14aca186-8826-4ec9-86aa-316031ce59d4",
+      "comment": "",
+      "command": "click",
+      "target": "css=.border:nth-child(1) .text-sm",
+      "targets": [
+        ["css=.border:nth-child(1) .text-sm", "css:finder"],
+        ["xpath=//div[@id='root']/div/main/div/div/div/div/div/div/button", "xpath:idRelative"],
+        ["xpath=//div/div/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Añadir intervalo')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "536e4fc7-ad8c-408d-9c08-23d7f53b684c",
+      "comment": "",
+      "command": "click",
+      "target": "css=.px-4",
+      "targets": [
+        ["css=.px-4", "css:finder"],
+        ["xpath=//div[@id='root']/div/main/div/div/div/div[2]/button", "xpath:idRelative"],
+        ["xpath=//div/div[2]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Guardar disponibilidad')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "25834764-c287-4131-bbc6-30f79910a056",
+      "comment": "",
+      "command": "click",
+      "target": "css=.px-4",
+      "targets": [
+        ["css=.px-4", "css:finder"],
+        ["xpath=//div[@id='root']/div/main/div/div/div/div[2]/button", "xpath:idRelative"],
+        ["xpath=//div/div[2]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Guardar disponibilidad')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "edc2491c-8153-4fe4-af67-0a619dd676aa",
+      "comment": "",
+      "command": "click",
+      "target": "css=.px-4",
+      "targets": [
+        ["css=.px-4", "css:finder"],
+        ["xpath=//div[@id='root']/div/main/div/div/div/div[2]/button", "xpath:idRelative"],
+        ["xpath=//div/div[2]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Guardar disponibilidad')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "93774a4f-c822-4738-be0b-9ce607234fe4",
+      "comment": "",
+      "command": "click",
+      "target": "css=.w-full",
+      "targets": [
+        ["css=.w-full", "css:finder"],
+        ["xpath=//div[@id='root']/div/aside/div[2]/button", "xpath:idRelative"],
+        ["xpath=//button", "xpath:position"],
+        ["xpath=//button[contains(.,'Cerrar sesión')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }]
+  }, {
+    "id": "af52fa53-103c-45fd-b003-b4ef0ec5fc98",
+    "name": "VerPerfil",
+    "commands": [{
+      "id": "58d6c70f-8e28-4bbd-ad91-77d51ffa9e2c",
+      "comment": "",
+      "command": "open",
+      "target": "/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "a2521a0b-8d4e-4d3b-ac98-ac3e4586dc1f",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1854x1048",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "7dfbe9a0-3729-434b-b5dc-b867941028ad",
+      "comment": "",
+      "command": "click",
+      "target": "css=.w-full:nth-child(1)",
+      "targets": [
+        ["css=.w-full:nth-child(1)", "css:finder"],
+        ["xpath=//input[@value='']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/form/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "fa6f3db5-ccfb-485e-9f2b-9643e0740d8b",
+      "comment": "",
+      "command": "type",
+      "target": "css=.w-full:nth-child(1)",
+      "targets": [
+        ["css=.w-full:nth-child(1)", "css:finder"],
+        ["xpath=//input[@value='fisio1@ull.es']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/form/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "fisio1@ull.es"
+    }, {
+      "id": "a7dd1be8-88aa-4799-a749-b3bb04b473b0",
+      "comment": "",
+      "command": "click",
+      "target": "css=.w-full:nth-child(2)",
+      "targets": [
+        ["css=.w-full:nth-child(2)", "css:finder"],
+        ["xpath=//input[@value='']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/form/input[2]", "xpath:idRelative"],
+        ["xpath=//input[2]", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "b4c57399-5da0-4e61-b4c6-90930283633f",
+      "comment": "",
+      "command": "type",
+      "target": "css=.w-full:nth-child(2)",
+      "targets": [
+        ["css=.w-full:nth-child(2)", "css:finder"],
+        ["xpath=//input[@value='123456']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/form/input[2]", "xpath:idRelative"],
+        ["xpath=//input[2]", "xpath:position"]
+      ],
+      "value": "123456"
+    }, {
+      "id": "c41a9458-a092-47dc-9868-23dda4a92612",
+      "comment": "",
+      "command": "click",
+      "target": "css=.bg-teal-600",
+      "targets": [
+        ["css=.bg-teal-600", "css:finder"],
+        ["xpath=//button[@type='submit']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/form/button", "xpath:idRelative"],
+        ["xpath=//button", "xpath:position"],
+        ["xpath=//button[contains(.,'Iniciar sesión')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "52861e5c-7f2c-4102-a43e-046d6954fcaf",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Ver mi perfil",
+      "targets": [
+        ["linkText=Ver mi perfil", "linkText"],
+        ["css=.inline-block", "css:finder"],
+        ["xpath=//a[contains(text(),'Ver mi perfil')]", "xpath:link"],
+        ["xpath=//div[@id='root']/div/main/div/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/profile')]", "xpath:href"],
+        ["xpath=//div/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Ver mi perfil')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "c4666066-1336-475e-8b03-06ac2653eb0a",
+      "comment": "",
+      "command": "click",
+      "target": "css=.mt-6:nth-child(7)",
+      "targets": [
+        ["css=.mt-6:nth-child(7)", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/button", "xpath:idRelative"],
+        ["xpath=//button", "xpath:position"],
+        ["xpath=//button[contains(.,'Editar perfil')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "9bfed96d-21a3-4124-ac56-de8a536bf816",
+      "comment": "",
+      "command": "click",
+      "target": "css=.bg-teal-600",
+      "targets": [
+        ["css=.bg-teal-600", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/form/button", "xpath:idRelative"],
+        ["xpath=//button", "xpath:position"],
+        ["xpath=//button[contains(.,'Guardar cambios')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "f4ced40d-c816-4ffd-b459-b29f8539fcdd",
+      "comment": "",
+      "command": "assertAlert",
+      "target": "Perfil actualizado correctamente",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "a38ccc80-7247-401a-a2df-9ee376974978",
+      "comment": "",
+      "command": "click",
+      "target": "css=.mt-6:nth-child(8)",
+      "targets": [
+        ["css=.mt-6:nth-child(8)", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/button[2]", "xpath:idRelative"],
+        ["xpath=//button[2]", "xpath:position"],
+        ["xpath=//button[contains(.,'Volver a la página anterior')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "9001de4a-26be-407b-853b-feac059bdcfb",
+      "comment": "",
+      "command": "click",
+      "target": "css=.mt-6:nth-child(8)",
+      "targets": [
+        ["css=.mt-6:nth-child(8)", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/button[2]", "xpath:idRelative"],
+        ["xpath=//button[2]", "xpath:position"],
+        ["xpath=//button[contains(.,'Volver a la página anterior')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "4451af73-7732-4780-be9e-fb49e97ae471",
+      "comment": "",
+      "command": "click",
+      "target": "css=.w-full",
+      "targets": [
+        ["css=.w-full", "css:finder"],
+        ["xpath=//div[@id='root']/div/aside/div[2]/button", "xpath:idRelative"],
+        ["xpath=//button", "xpath:position"],
+        ["xpath=//button[contains(.,'Cerrar sesión')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }]
+  }],
+  "suites": [{
+    "id": "ac9f55cf-7481-4230-a27d-002fc19338bd",
+    "name": "Default Suite",
+    "persistSession": false,
+    "parallel": false,
+    "timeout": 300,
+    "tests": ["dcd62ef8-00d5-448c-9b3a-848be23ddd4e"]
+  }],
+  "urls": ["https://10.6.131.134/"],
+  "plugins": []
+}
