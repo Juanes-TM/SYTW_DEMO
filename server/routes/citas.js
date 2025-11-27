@@ -1,3 +1,4 @@
+// server/routes/citas.js
 const express = require("express");
 const router = express.Router();
 const Cita = require("../models/cita");
@@ -140,7 +141,7 @@ router.get("/", auth, async (req, res) => {
 
     const citas = await Cita.find(filtro)
       .populate("paciente", "nombre apellido email")
-      .populate("fisioterapeuta", "nombre apellido email")
+      .populate("fisioterapeuta", "nombre apellido email especialidad")
       .sort({ startAt: 1 });
 
     res.status(200).json(citas);
@@ -267,7 +268,5 @@ router.get('/historial', auth, async (req, res) => {
     res.status(500).json({ msg: "Error obteniendo historial" });
   }
 });
-
-
 
 module.exports = router;

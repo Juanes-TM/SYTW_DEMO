@@ -8,6 +8,7 @@ const UserSchema = new mongoose.Schema({
   telephone: {type: String, required: true},
   rol: { type: String, enum: ['cliente', 'fisioterapeuta', 'admin'], default: 'cliente' },
   createdAt: { type: Date, default: Date.now },
+  especialidad: {type: String, default: null },
   // Campos para recuperación de contraseña
   resetPasswordToken: { type: String },
   resetPasswordExpires: { type: Date }

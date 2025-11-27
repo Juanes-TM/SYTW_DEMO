@@ -1,5 +1,5 @@
 import { Outlet, Link, useNavigate } from "react-router-dom";
-import { LogOut, Home, Calendar, User, Users, Settings } from "lucide-react"; // Asegúrate de importar los iconos correctamente
+import { LogOut, Home, Calendar, User, Users, Settings } from "lucide-react";
 
 export default function DashboardLayout() {
   const navigate = useNavigate();
@@ -11,6 +11,7 @@ export default function DashboardLayout() {
   const handleLogout = () => {
     localStorage.removeItem("fisioUser");
     localStorage.removeItem("token");
+    localStorage.removeItem("lastFisioId");
     navigate("/login");
   };
 

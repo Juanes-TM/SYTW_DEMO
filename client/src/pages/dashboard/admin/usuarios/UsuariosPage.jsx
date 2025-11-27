@@ -1,6 +1,18 @@
+//client/src/pages/dashboard/admin/usuarios/UsuariosPage.jsx
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
+
+// Lista de especialidades para el selector
+const ESPECIALIDADES = [
+    "Traumatología",
+    "Deportiva",
+    "Neurología",
+    "Respiratoria",
+    "General",
+    "Pediátrica",
+    "Acupuntura",
+];
 
 export default function UsuariosPage() {
   const { user } = useSelector((state) => state.user);
@@ -10,27 +22,39 @@ export default function UsuariosPage() {
   const [loading, setLoading] = useState(true);
   const [mensaje, setMensaje] = useState("");
   const [usuarioEditando, setUsuarioEditando] = useState(null);
+  
+  // ESTADO CLAVE: Datos del usuario al abrir el modal (para comparación)
+  const [datosOriginales, setDatosOriginales] = useState({});
+
   const [formData, setFormData] = useState({});
   const [sortField, setSortField] = useState("nombre");
   const [sortOrder, setSortOrder] = useState("asc");
   const [modalVisible, setModalVisible] = useState(false);
 
+  const token = user?.token || localStorage.getItem('token'); 
+
   const fetchUsuarios = async () => {
+    if (!token) return;
     try {
       const res = await axios.get("/api/admin/users", {
-        headers: { Authorization: `Bearer ${user.token}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
       setUsuarios(res.data);
       setLoading(false);
     } catch (err) {
       console.error("Error al obtener usuarios:", err);
+      setMensaje("Error al cargar usuarios");
+      setTimeout(() => setMensaje(""), 5000);
       setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchUsuarios();
-  }, []);
+  }, [token]);
+
+  // LÓGICA CLAVE: Comparar formData (actual) con datosOriginales (al abrir)
+  const formHasChanged = JSON.stringify(formData) !== JSON.stringify(datosOriginales);
 
   const handleSort = (field) => {
     const newOrder =
@@ -62,13 +86,15 @@ export default function UsuariosPage() {
       await axios.put(
         `/api/admin/users/${id}/role`,
         { rol: nuevoRol },
-        { headers: { Authorization: `Bearer ${user.token}` } }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       setMensaje("Rol actualizado correctamente");
       setTimeout(() => setMensaje(""), 3000);
       fetchUsuarios();
     } catch (err) {
       console.error("Error al cambiar rol:", err);
+      setMensaje(err.response?.data?.msg || "Error al cambiar rol");
+      setTimeout(() => setMensaje(""), 5000);
     }
   };
 
@@ -76,24 +102,33 @@ export default function UsuariosPage() {
     if (!confirm("¿Seguro que deseas eliminar este usuario?")) return;
     try {
       await axios.delete(`/api/admin/users/${id}`, {
-        headers: { Authorization: `Bearer ${user.token}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
       setMensaje("Usuario eliminado correctamente");
       setTimeout(() => setMensaje(""), 3000);
       fetchUsuarios();
     } catch (err) {
       console.error("Error al eliminar usuario:", err);
+      setMensaje(err.response?.data?.msg || "Error al eliminar usuario");
+      setTimeout(() => setMensaje(""), 5000);
     }
   };
 
   const abrirModalEdicion = (u) => {
-    setUsuarioEditando(u);
-    setFormData({
+    // 1. Datos que se deben editar
+    const currentData = {
       nombre: u.nombre,
       apellido: u.apellido,
       email: u.email,
       telephone: u.telephone,
-    });
+      // Incluir la especialidad, sea string o "" o null
+      especialidad: u.rol === "fisioterapeuta" ? (u.especialidad || "") : "", 
+    };
+    
+    setUsuarioEditando(u);
+    setFormData(currentData);
+    // 2. Guardar una copia exacta del estado original para la comparación
+    setDatosOriginales(JSON.parse(JSON.stringify(currentData))); 
     setModalVisible(true);
   };
 
@@ -103,19 +138,37 @@ export default function UsuariosPage() {
   };
 
   const guardarEdicion = async () => {
+    if (!formHasChanged) {
+      setMensaje("No hay cambios para guardar");
+      setTimeout(() => setMensaje(""), 3000);
+      return;
+    }
+    
     try {
-      await axios.put(
+      console.log("📤 Enviando datos al servidor:", formData);
+      
+      const res = await axios.put(
         `/api/admin/users/${usuarioEditando._id}`,
-        formData,
-        { headers: { Authorization: `Bearer ${user.token}` } }
+        formData, // Enviamos todo el formData
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-      setMensaje("Usuario actualizado correctamente");
+      
+      setMensaje(res.data.msg || "Usuario actualizado correctamente");
       setTimeout(() => setMensaje(""), 3000);
       cerrarModal();
       fetchUsuarios();
     } catch (err) {
-      console.error("Error al editar usuario:", err);
+      console.error("❌ Error al editar usuario:", err.response?.data);
+      setMensaje(err.response?.data?.msg || "Error al actualizar usuario");
+      setTimeout(() => setMensaje(""), 5000);
     }
+  };
+
+  const handleInputChange = (field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
   if (loading) return <p className="p-6">Cargando usuarios...</p>;
@@ -151,7 +204,9 @@ export default function UsuariosPage() {
       </div>
 
       {mensaje && (
-        <div className="bg-green-100 text-green-800 p-3 rounded mb-4 text-sm shadow-sm">
+        <div className={`p-3 rounded mb-4 text-sm shadow-sm ${
+          mensaje.includes("Error") ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"
+        }`}>
           {mensaje}
         </div>
       )}
@@ -160,11 +215,11 @@ export default function UsuariosPage() {
         <table className="min-w-full text-sm text-gray-700">
           <thead className="bg-gradient-to-r from-teal-600 to-teal-700 text-white text-xs uppercase">
             <tr>
-              {["Nombre", "Email", "Teléfono", "Rol", "Registrado", "Acciones"].map((col, idx) => (
+              {["Nombre", "Email", "Teléfono", "Rol", "Especialidad", "Registrado", "Acciones"].map((col, idx) => (
                 <th
                   key={idx}
                   className={`px-6 py-3 text-left font-semibold cursor-pointer ${
-                    idx < 5 ? "hover:bg-teal-800 transition" : ""
+                    idx < 6 ? "hover:bg-teal-800 transition" : ""
                   }`}
                   onClick={() =>
                     idx === 0
@@ -174,21 +229,17 @@ export default function UsuariosPage() {
                       : idx === 3
                       ? handleSort("rol")
                       : idx === 4
+                      ? handleSort("especialidad")
+                      : idx === 5
                       ? handleSort("createdAt")
                       : null
                   }
                 >
                   {col}
-                  {sortField ===
-                    (idx === 0
-                      ? "nombre"
-                      : idx === 1
-                      ? "email"
-                      : idx === 3
-                      ? "rol"
-                      : idx === 4
-                      ? "createdAt"
-                      : "") && (sortOrder === "asc" ? " ↑" : " ↓")}
+                  {/* Se deja el icono de ordenación solo si es un campo de la tabla */}
+                  {idx < 6 && sortField === (
+                      idx === 0 ? "nombre" : idx === 1 ? "email" : idx === 3 ? "rol" : idx === 4 ? "especialidad" : idx === 5 ? "createdAt" : ""
+                  ) && (sortOrder === "asc" ? " ↑" : " ↓")}
                 </th>
               ))}
             </tr>
@@ -215,6 +266,11 @@ export default function UsuariosPage() {
                     {u.rol}
                   </span>
                 </td>
+                {/* COLUMNA: Especialidad */}
+                <td className="px-6 py-3">
+                   {u.rol === "fisioterapeuta" ? (u.especialidad || 'No asignada') : '-'}
+                </td>
+                
                 <td className="px-6 py-3">
                   {new Date(u.createdAt).toLocaleDateString()}
                 </td>
@@ -253,7 +309,7 @@ export default function UsuariosPage() {
         )}
       </div>
 
-      {/* Modal estético */}
+      {/* Modal de Edición */}
       {modalVisible && usuarioEditando && (
         <div className="fixed inset-0 flex items-center justify-center z-50 transition-all duration-300">
           <div
@@ -263,7 +319,7 @@ export default function UsuariosPage() {
 
           <div className="relative bg-white p-8 rounded-3xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-100 animate-[fadeIn_0.3s_ease-out]">
             <h2 className="text-2xl font-semibold text-gray-800 mb-6">
-              Editar usuario
+              Editar {usuarioEditando.nombre}
             </h2>
 
             <div className="space-y-4">
@@ -275,23 +331,35 @@ export default function UsuariosPage() {
                   <input
                     type="text"
                     value={formData[campo] || ""}
-                    onChange={(e) =>
-                      setFormData({ ...formData, [campo]: e.target.value })
-                    }
+                    onChange={(e) => handleInputChange(campo, e.target.value)}
                     className={`border rounded-xl px-3 py-2 w-full shadow-sm focus:ring-2 focus:ring-teal-500 outline-none transition ${
-                      campo === "email"
-                        ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email || "")
-                          ? "border-gray-300"
-                          : "border-red-500"
-                        : campo === "telephone"
-                        ? /^[0-9]{9}$/.test(formData.telephone || "")
-                          ? "border-gray-300"
-                          : "border-red-500"
+                      (campo === "email" && formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) ||
+                      (campo === "telephone" && formData.telephone && !/^[0-9]{9}$/.test(formData.telephone))
+                        ? "border-red-500"
                         : "border-gray-300"
                     }`}
                   />
                 </div>
               ))}
+              
+              {/* CAMPO: Especialidad (Solo para fisioterapeutas) */}
+              {usuarioEditando.rol === "fisioterapeuta" && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">
+                    Especialidad
+                  </label>
+                  <select
+                    value={formData.especialidad || ""}
+                    onChange={(e) => handleInputChange("especialidad", e.target.value)}
+                    className="border rounded-xl px-3 py-2 w-full shadow-sm focus:ring-2 focus:ring-teal-500 outline-none transition border-gray-300"
+                  >
+                    <option value="">-- No asignada --</option>
+                    {ESPECIALIDADES.map(esp => (
+                        <option key={esp} value={esp}>{esp}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
             </div>
 
             <div className="flex justify-end gap-3 mt-8">
@@ -303,11 +371,23 @@ export default function UsuariosPage() {
               </button>
               <button
                 onClick={guardarEdicion}
-                className="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg shadow-sm transition"
+                disabled={!formHasChanged}
+                className={`px-4 py-2 text-white rounded-lg shadow-sm transition ${
+                  !formHasChanged 
+                    ? 'bg-gray-400 cursor-not-allowed' 
+                    : 'bg-teal-600 hover:bg-teal-700'
+                }`}
               >
                 Guardar cambios
               </button>
             </div>
+
+            {/* Indicador de cambios */}
+            {formHasChanged && (
+              <div className="mt-4 p-2 bg-blue-50 text-blue-700 text-sm rounded-lg">
+                ⚠️ Tienes cambios sin guardar
+              </div>
+            )}
           </div>
         </div>
       )}

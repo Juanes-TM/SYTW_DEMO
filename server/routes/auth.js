@@ -27,22 +27,22 @@ router.post('/register', async (req, res) => {
   // Comprobar formato del email
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
-	  return res.status(400).json({ msg: 'Formato de email no válido' });
+    return res.status(400).json({ msg: 'Formato de email no válido' });
   }
 
   // Contraseña de longitud mínima 6
   if (password.length < 6) {
-	  return res.status(400).json({ msg: 'La contraseña debe tener al menos 6 caracteres' });
+    return res.status(400).json({ msg: 'La contraseña debe tener al menos 6 caracteres' });
   }
 
   // Repetir contraseña
   if (password != password2) {
-	  return res.status(400).json({ msg: 'Las contraseñas no coinciden' });  }
+    return res.status(400).json({ msg: 'Las contraseñas no coinciden' });  }
 
   // Teléfono válido (9 números)
   const telRegex = /^[0-9]{9}$/
   if (!telRegex.test(telephone)) {
-	  return res.status(400).json({ msg: 'El teléfono debe tener 9 dígitos'});
+    return res.status(400).json({ msg: 'El teléfono debe tener 9 dígitos'});
   }
 
   try {
@@ -59,7 +59,8 @@ router.post('/register', async (req, res) => {
       email,
       password: hashedPassword,
       telephone,
-      rol: 'cliente'
+      rol: 'cliente',
+      // 'especialidad' se crea como null por defecto
     });
 
     await nuevoUsuario.save();
@@ -90,11 +91,11 @@ router.post('/login', async (req, res) => {
   // Comprobar formato email
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!email || !emailRegex.test(email)) {
-	  return res.status(400).json({ msg: 'El email no tiene formato válido' });
+    return res.status(400).json({ msg: 'El email no tiene formato válido' });
   }
 
   if (!password) {
-	  return res.status(400).json({ msg: 'Por favor, introduce la contraseña' });
+    return res.status(400).json({ msg: 'Por favor, introduce la contraseña' });
   }
 
   try {
@@ -123,7 +124,8 @@ router.post('/login', async (req, res) => {
         apellido: usuario.apellido,
         email: usuario.email,
         telephone: usuario.telephone,
-        rol: usuario.rol
+        rol: usuario.rol,
+        especialidad: usuario.especialidad // AÑADIDO: Incluimos la especialidad
       }
     });
 
@@ -138,87 +140,85 @@ router.post('/login', async (req, res) => {
 const authMiddleware = require('../middleware/auth');
 
 router.get('/profile', authMiddleware, async (req, res) => {
-	try {
-		const usuario = await User.findById(req.userId).select('-password -resetPasswordToken -resetPasswordExpires -__v');
-		if (!usuario) return res.status(404).json({ msg: 'Usuario no encontrado' });
-		res.status(200).json({ user: usuario });
-	} catch (err) {
-		console.error('Error en profile:', err);
-		res.status(500).json({ msg: 'Error en el servidor' });
-	}
+  try {
+    // CAMBIO: Aseguramos que el perfil traiga el campo 'especialidad'
+    const usuario = await User.findById(req.userId).select('-password -resetPasswordToken -resetPasswordExpires -__v');
+    if (!usuario) return res.status(404).json({ msg: 'Usuario no encontrado' });
+    res.status(200).json({ user: usuario });
+  } catch (err) {
+    console.error('Error en profile:', err);
+    res.status(500).json({ msg: 'Error en el servidor' });
+  }
 });
 
 
 
 // Recuperación de contraseñas
 router.post('/forgot-password', async (req, res) => {
-	const { email } = req.body;
-	if (!email) return res.status(400).json({ msg: 'Email requerido' });
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ msg: 'Email requerido' });
 
-	try {
-		const usuario = await User.findOne({ email });
-		if (!usuario) {
-			return res.status(400).json({ msg: 'El correo no está registrado' });
-		}
-		// Generamos token seguro que expira en 1 hora
-		const token = crypto.randomBytes(32).toString('hex');
-		const expires = Date.now() + 3600 * 1000;
+  try {
+    const usuario = await User.findOne({ email });
+    if (!usuario) {
+      return res.status(400).json({ msg: 'El correo no está registrado' });
+    }
+    // Generamos token seguro que expira en 1 hora
+    const token = crypto.randomBytes(32).toString('hex');
+    const expires = Date.now() + 3600 * 1000;
 
-		// Guardamos el token
-		usuario.resetPasswordToken = token;
-		usuario.resetPasswordExpires = new Date(expires);
-		await usuario.save();
+    // Guardamos el token
+    usuario.resetPasswordToken = token;
+    usuario.resetPasswordExpires = new Date(expires);
+    await usuario.save();
 
-		//const resetLink = "http://172.16.0.1/reset-password?token=" + token + "&email=" + encodeURIComponent(email);
+    //const resetLink = "http://172.16.0.1/reset-password?token=" + token + "&email=" + encodeURIComponent(email);
     const resetLink = `http://172.16.0.1/reset-password?token=${token}&email=${encodeURIComponent(email)}`;
 
-		// Devolvemos el enlace
-		return res.status(200).json({
-			msg: 'Token de recuperación creado', resetLink
-		});
-	} catch (err) {
-		console.error('Error en forgot-password:', err);
-		return res.status(500).json({ msg: 'Error del servidor' });
-	}
+    // Devolvemos el enlace
+    return res.status(200).json({
+      msg: 'Token de recuperación creado', resetLink
+    });
+  } catch (err) {
+    console.error('Error en forgot-password:', err);
+    return res.status(500).json({ msg: 'Error del servidor' });
+  }
 });
 
 
 // Resetear la contraseña
 router.post('/reset-password', async (req, res) => {
-	const { email, token, newPassword } = req.body;
-	if (!email || !token || !newPassword) {
-		return res.status(400).json({ msg: 'Faltan parámetros' });
-	}
+  const { email, token, newPassword } = req.body;
+  if (!email || !token || !newPassword) {
+    return res.status(400).json({ msg: 'Faltan parámetros' });
+  }
 
-	try {
-		const usuario = await User.findOne({
-			email,
-			resetPasswordToken: token,
-			resetPasswordExpires: { $gt: new Date() }
-		});
+  try {
+    const usuario = await User.findOne({
+      email,
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: new Date() }
+    });
 
-		if (!usuario) {
-			return res.status(400).json({ msg: 'Token inválido o expirado' });
-		}
+    if (!usuario) {
+      return res.status(400).json({ msg: 'Token inválido o expirado' });
+    }
 
-		// Hashear la nueva contraseña con bcryptjs
-		const bcrypt = require('bcryptjs');
-		const hashed = await bcrypt.hash(newPassword, 10);
-		usuario.password = hashed;
+    // Hashear la nueva contraseña con bcryptjs
+    const bcrypt = require('bcryptjs');
+    const hashed = await bcrypt.hash(newPassword, 10);
+    usuario.password = hashed;
 
-		// Eliminamos campos de reset
-		usuario.resetPasswordToken = undefined;
-		usuario.resetPasswordExpires = undefined;
-		await usuario.save();
+    // Eliminamos campos de reset
+    usuario.resetPasswordToken = undefined;
+    usuario.resetPasswordExpires = undefined;
+    await usuario.save();
 
-		return res.status(200).json({ msg: 'Contraseña actualizada correctamente' });
-	} catch (err) {
-		console.error('Error en reset-password:', err);
-		return res.status(500).json({ msg: 'Error en el servidor' });
-	}
+    return res.status(200).json({ msg: 'Contraseña actualizada correctamente' });
+  } catch (err) {
+    console.error('Error en reset-password:', err);
+    return res.status(500).json({ msg: 'Error en el servidor' });
+  }
 });
 
-
-// EXPORTAR EL ROUTER
 module.exports = router;
-

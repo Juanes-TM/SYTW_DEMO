@@ -9,39 +9,35 @@ export default function ValoracionForm() {
     fisioId: '',
     puntuacion: 5,
     comentario: '',
-    especialidad: ''
+    // ELIMINADO: especialidad
   });
-  const [especialidades, setEspecialidades] = useState([]);
+  // ELIMINADO: estado de especialidades
   const [msg, setMsg] = useState('');
   const navigate = useNavigate();
   const params = useParams();
 
   useEffect(() => {
-    // si llamas con /valorar/:fisioId lo recogemos
+    // Si llamas con /valorar/:fisioId lo recogemos
     if (params.fisioId) setForm(f => ({ ...f, fisioId: params.fisioId }));
-
-    // Opcional: pedir especialidades del backend si lo tienes
-    (async () => {
-      try {
-        // si tienes un endpoint que devuelva especialidades del fisio: /api/fisioterapeutas/:id
-        if (params.fisioId) {
-          const res = await api.get(`/api/fisioterapeutas/${params.fisioId}`);
-          // asumir que devuelve { especialidades: ['deporte','rehab'] } o similar
-          setEspecialidades(res.data.especialidades || []);
-          if (!form.especialidad && (res.data.especialidades || []).length > 0) {
-            setForm(f => ({ ...f, especialidad: res.data.especialidades[0] }));
-          }
-        }
-      } catch (err) {
-        // no crítico
-      }
-    })();
+    
+    // ELIMINADO: La lógica de useEffect para cargar especialidades (no es necesaria)
+    
   }, [params.fisioId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Filtramos los datos a enviar para asegurar que solo van los campos correctos
+    const dataToSend = {
+        fisioId: form.fisioId,
+        puntuacion: form.puntuacion,
+        comentario: form.comentario,
+        // La especialidad no se incluye
+    };
+    
     try {
-      await crearValoracion(form);
+      // Asumimos que 'crearValoracion' acepta el objeto limpio
+      await crearValoracion(dataToSend); 
       alert('Valoración enviada. Gracias!');
       navigate(-1);
     } catch (err) {
@@ -70,17 +66,8 @@ export default function ValoracionForm() {
           </select>
         </div>
 
-        <div>
-          <label className="block text-sm">Especialidad</label>
-          <input
-            value={form.especialidad}
-            onChange={e => setForm({ ...form, especialidad: e.target.value })}
-            placeholder="ej: traumatología, deportiva"
-            className="w-full p-2 border rounded"
-            required
-          />
-        </div>
-
+        {/* CAMPO ELIMINADO: Se quita todo el bloque JSX de Especialidad */}
+        
         <div>
           <label className="block text-sm">Comentario (opcional)</label>
           <textarea
