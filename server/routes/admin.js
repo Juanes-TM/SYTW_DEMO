@@ -84,8 +84,8 @@ router.put("/users/:id", auth, isAdmin, async (req, res) => {
     const { nombre, apellido, email, telephone, especialidad } = req.body; 
 
     // LOGS DE DEPURACIÓN
-    console.log("Datos recibidos en PUT /users/:id:", req.body);
-    console.log("Especialidad recibida:", especialidad);
+    //console.log("Datos recibidos en PUT /users/:id:", req.body);
+    //console.log("Especialidad recibida:", especialidad);
 
     const userToUpdate = await User.findById(req.params.id);
     if (!userToUpdate) {
@@ -104,7 +104,7 @@ router.put("/users/:id", auth, isAdmin, async (req, res) => {
         updateData.especialidad = especialidad === '' ? null : especialidad; 
     }
 
-    console.log("Datos a actualizar en BD:", updateData);
+    //console.log("Datos a actualizar en BD:", updateData);
 
     // VALIDACIONES DE FORMATO
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -126,7 +126,7 @@ router.put("/users/:id", auth, isAdmin, async (req, res) => {
       { new: true, runValidators: true }
     ).select("-password -resetPasswordToken -resetPasswordExpires");
 
-    console.log("Usuario actualizado:", user);
+    //console.log("Usuario actualizado:", user);
 
     const adminUser = await User.findById(req.userId).select("nombre apellido email");
     await registrarEvento(

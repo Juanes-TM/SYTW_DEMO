@@ -1,5 +1,4 @@
 // server/routes/valoraciones.js
-
 const express = require('express');
 const router = express.Router();
 const Valoracion = require('../models/valoraciones');
@@ -61,7 +60,6 @@ router.post('/crear', auth, async (req, res) => {
     });
 
     await nueva.save();
-    console.log(`Valoración creada por usuario ${req.userId} para fisio ${fisioId}`);
     
     return res.status(201).json({ msg: 'Valoración creada exitosamente', valoracion: nueva });
 
