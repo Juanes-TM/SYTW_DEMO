@@ -12,7 +12,7 @@ describe('VerPerfilFisio', function() {
     vars = {}
   })
   afterEach(async function() {
-    await driver.quit();
+    if (driver) { await driver.quit(); }
   })
   it('VerPerfilFisio', async function() {
     await driver.get("https://10.6.131.134/")

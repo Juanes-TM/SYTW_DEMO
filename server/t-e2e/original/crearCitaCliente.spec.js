@@ -12,7 +12,7 @@ describe('CrearCitaCliente', function() {
     vars = {}
   })
   afterEach(async function() {
-    await driver.quit();
+    if (driver) { await driver.quit(); }
   })
   it('CrearCitaCliente', async function() {
     await driver.get("https://10.6.131.134/login")

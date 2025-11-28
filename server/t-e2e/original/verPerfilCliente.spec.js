@@ -12,7 +12,7 @@ describe('VerPerfilCliente', function() {
     vars = {}
   })
   afterEach(async function() {
-    await driver.quit();
+    if (driver) { await driver.quit(); }
   })
   it('VerPerfilCliente', async function() {
     await driver.get("https://10.6.131.134/")
