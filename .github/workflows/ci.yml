@@ -11,6 +11,18 @@ jobs:
     name: Test Backend
     runs-on: ubuntu-latest
     
+    services:
+      # Si usas MongoDB en los tests, añade esto:
+      mongodb:
+        image: mongo:5
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "echo 'db.runCommand(\"ping\").ok' | mongosh localhost:27017/test --quiet"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -20,24 +32,51 @@ jobs:
       with:
         node-version: '18'
         
-    # Instalar Firefox para los tests E2E originales de Selenium
-    - name: Install Firefox and Drivers (for Selenium E2E)
+    # Instalar Firefox para los tests E2E
+    - name: Install Firefox and Drivers
       uses: browser-actions/setup-firefox@latest
       
-    # Crear archivo de configuración (ruta corregida para el CI)
+    # Crear archivo de configuración para CI
     - name: Create Backend Config File
       run: |
-        # Esto asegura que ./backend_config.json exista dentro de la carpeta server
-        echo '{"JWT_SECRET": "ci_testing_secret_123"}' > server/backend_config.json
+        cat > server/backend_config.json << EOF
+        {
+          "JWT_SECRET": "ci_testing_secret_123",
+          "MONGO_URI": "mongodb://localhost:27017/testdb"
+        }
+        EOF
         
     - name: Install dependencies (server)
       run: cd server && npm install
       
-    - name: Run Backend Tests (Unitarios + Original E2E)
-      # Simplemente llamamos a npm test, que ahora usa la ruta específica del package.json
+    - name: Run Unit Tests
       run: |
         cd server
-        npm test
+        npm test -- test/ --runInBand --silent --passWithNoTests --forceExit --detectOpenHandles --coverage=false
+      
+    - name: Start Server for E2E Tests
+      run: |
+        cd server
+        # Iniciar servidor en background con la configuración de test
+        node server.js &
+        echo $! > server.pid
+        sleep 5  # Esperar a que el servidor arranque
+      
+    - name: Run E2E Tests
+      run: |
+        cd server
+        # Modificar los tests para que apunten a localhost
+        sed -i 's|https://10.6.131.134|http://localhost:3000|g' t-e2e/original/*.spec.js
+        npm test -- t-e2e/original/ --runInBand --passWithNoTests --forceExit --detectOpenHandles --coverage=false
+      
+    - name: Stop Server
+      if: always()
+      run: |
+        cd server
+        if [ -f server.pid ]; then
+          kill $(cat server.pid) || true
+          rm server.pid
+        fi
 
   test-frontend:
     name: Test Frontend  

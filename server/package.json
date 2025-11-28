@@ -4,7 +4,9 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "jest test/ t-e2e/original/ --runInBand --silent --passWithNoTests --forceExit --detectOpenHandles --coverage=false",
+    "test": "jest test/ --runInBand --silent --passWithNoTests --forceExit --detectOpenHandles --coverage=false",
+    "test:e2e": "jest t-e2e/original/ --runInBand --passWithNoTests --forceExit --detectOpenHandles --coverage=false",
+    "test:ci": "npm run test && npm run test:e2e",
     "start": "node server.js"
   },
   "keywords": [],

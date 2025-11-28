@@ -15,7 +15,8 @@ describe('CrearCitaCliente', function() {
     if (driver) { await driver.quit(); }
   })
   it('CrearCitaCliente', async function() {
-    await driver.get("https://10.6.131.134/login")
+    const baseUrl = process.env.CI ? 'http://localhost:3000' : 'https://10.6.131.134';
+    await driver.get(baseUrl)
     await driver.manage().window().setRect({ width: 1070, height: 1063 })
     await driver.findElement(By.css(".w-full:nth-child(1)")).click()
     await driver.findElement(By.css(".w-full:nth-child(1)")).sendKeys("nano@ull.es")

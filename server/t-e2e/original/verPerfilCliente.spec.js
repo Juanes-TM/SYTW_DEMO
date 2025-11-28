@@ -15,7 +15,8 @@ describe('VerPerfilCliente', function() {
     if (driver) { await driver.quit(); }
   })
   it('VerPerfilCliente', async function() {
-    await driver.get("https://10.6.131.134/")
+    const baseUrl = process.env.CI ? 'http://localhost:3000' : 'https://10.6.131.134';
+    await driver.get(baseUrl)
     await driver.manage().window().setRect({ width: 1854, height: 1048 })
     await driver.findElement(By.css(".w-full:nth-child(1)")).click()
     await driver.findElement(By.css(".w-full:nth-child(1)")).sendKeys("nano@ull.es")

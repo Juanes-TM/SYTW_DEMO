@@ -15,7 +15,8 @@ describe('VerPanelInformacionFisio', function() {
     if (driver) { await driver.quit(); }
   })
   it('VerPanelInformacionFisio', async function() {
-    await driver.get("https://10.6.131.134/")
+    const baseUrl = process.env.CI ? 'http://localhost:3000' : 'https://10.6.131.134';
+    await driver.get(baseUrl)
     await driver.manage().window().setRect({ width: 979, height: 1063 })
     await driver.findElement(By.css(".w-full:nth-child(1)")).click()
     await driver.findElement(By.css(".w-full:nth-child(1)")).sendKeys("fisio1@ull.es")
