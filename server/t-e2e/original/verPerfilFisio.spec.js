@@ -2,8 +2,9 @@
 const { Builder, By, Key, until } = require('selenium-webdriver')
 const assert = require('assert')
 
+jest.setTimeout(30000);
+
 describe('VerPerfilFisio', function() {
-  this.timeout(30000)
   let driver
   let vars
   beforeEach(async function() {
