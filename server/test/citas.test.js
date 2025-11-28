@@ -9,7 +9,7 @@ const Cita = require('../models/cita');
 const User = require('../models/user'); 
 
 // LEER LA CONFIGURACIÓN REAL (Solo para obtener el JWT_SECRET correcto)
-const configPath = '/home/usuario/backend_config.json';
+const configPath = './backend_config.json';
 const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
 const JWT_SECRET = config.JWT_SECRET;
 

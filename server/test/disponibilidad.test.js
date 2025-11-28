@@ -17,7 +17,7 @@ const DisponibilidadSemanal = require('../models/disponibilidadSemanal');
 const DisponibilidadDia = require('../models/disponibilidadDia');
 
 // --- CONFIGURACIÓN DEL TOKEN (Lectura del secreto real) ---
-const configPath = '/home/usuario/backend_config.json';
+const configPath = './backend_config.json';
 let JWT_SECRET;
 try {
   const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
