@@ -2,6 +2,7 @@ import { Outlet, Link, useNavigate } from "react-router-dom";
 import { LogOut, Home, Calendar, User, Users, Settings } from "lucide-react";
 import NotificacionesBell from './NotificacionesBell';
 
+
 export default function DashboardLayout() {
   const navigate = useNavigate();
 
@@ -53,6 +54,14 @@ export default function DashboardLayout() {
                 <Calendar size={20} />
                 <span>Calendario</span>
               </Link>
+              <Link 
+                to="/dashboard/fisioterapeutas" 
+                className="flex items-center gap-3 px-3 py-2 rounded hover:bg-teal-500 transition"
+              >
+                <Users size={20} />
+                <span>Nuestro Equipo</span>
+              </Link>
+
             </>
           )}
 
