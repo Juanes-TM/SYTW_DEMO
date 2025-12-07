@@ -32,7 +32,7 @@ export default function ValoracionForm() {
         fisioId: form.fisioId,
         puntuacion: form.puntuacion,
         comentario: form.comentario,
-        // La especialidad no se incluye
+        especialidad: "general"
     };
     
     try {

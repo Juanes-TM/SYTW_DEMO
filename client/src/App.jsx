@@ -26,6 +26,8 @@ import DisponibilidadPage from "./pages/dashboard/fisio/disponibilidad/Disponibi
 import UsuariosPage from "./pages/dashboard/admin/usuarios/UsuariosPage";
 import ReservarCitaPage from "./pages/dashboard/paciente/citas/reserva/ReservarCitaPage";
 import FisioterapeutasListPage from "./pages/FisioterapeutasListPage";
+import ResenasDashboard from "./pages/dashboard/ResenasDashboard";
+
 
 
 function App() {
@@ -63,9 +65,12 @@ function App() {
         <Route path="fisio/disponibilidad" element={<DisponibilidadPage />} />
         <Route path="fisioterapeutas" element={<FisioterapeutasListPage />} />
 
+        <Route path="resenas" element={<ResenasDashboard />} />
+
         {/* --- ADMIN --- */}
         <Route path="admin" element={<AdminDashboard />} />
         <Route path="admin/usuarios" element={<UsuariosPage />} />
+
       </Route>
 
       {/* Ruta protegida exclusiva para admins (puedes mantenerla si la usas) */}

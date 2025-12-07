@@ -1,5 +1,5 @@
 import { Outlet, Link, useNavigate } from "react-router-dom";
-import { LogOut, Home, Calendar, User, Users, Settings } from "lucide-react";
+import { LogOut, Home, Calendar, User, Users, Settings, Star } from "lucide-react";
 import NotificacionesBell from './NotificacionesBell';
 
 
@@ -61,6 +61,13 @@ export default function DashboardLayout() {
                 <Users size={20} />
                 <span>Nuestro Equipo</span>
               </Link>
+              <Link 
+                to="/dashboard/resenas" 
+                className="flex items-center gap-3 px-3 py-2 rounded hover:bg-white/10 transition"
+              >
+                <Star size={20} />
+                <span>Reseñas</span>
+              </Link>
 
             </>
           )}
@@ -83,6 +90,13 @@ export default function DashboardLayout() {
                 <Users size={20} />
                 <span>Nuestro Equipo</span>
               </Link>
+              <Link 
+                to="/dashboard/resenas" 
+                className="flex items-center gap-3 px-3 py-2 rounded hover:bg-white/10 transition"
+              >
+                <Star size={20} />
+                <span>Reseñas</span>
+              </Link>
             </>
           )}
 
@@ -103,6 +117,13 @@ export default function DashboardLayout() {
               >
                 <Users size={20} />
                 <span>Nuestro Equipo</span>
+              </Link>
+              <Link 
+                to="/dashboard/resenas" 
+                className="flex items-center gap-3 px-3 py-2 rounded hover:bg-white/10 transition"
+              >
+                <Star size={20} />
+                <span>Reseñas</span>
               </Link>
             </>
           )}
