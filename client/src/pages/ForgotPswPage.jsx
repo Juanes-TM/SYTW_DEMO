@@ -1,7 +1,7 @@
-// client/src/pages/ForgotPasswordPage.jsx
 import { useState } from "react";
 import api from "../services/api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { Mail, ArrowLeft, KeyRound, AlertCircle, CheckCircle2, Clipboard } from "lucide-react";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -24,16 +24,12 @@ export default function ForgotPasswordPage() {
 
   const safeCopyToClipboard = async (text) => {
     if (!text) return false;
-    // Intentar API moderna
     try {
       if (navigator.clipboard && navigator.clipboard.writeText) {
         await navigator.clipboard.writeText(text);
         return true;
       }
-    } catch (e) {
-      // fallthrough a fallback
-    }
-    // Fallback clásico
+    } catch (e) { }
     try {
       const el = document.createElement("textarea");
       el.value = text;
@@ -60,14 +56,11 @@ export default function ForgotPasswordPage() {
     try {
       const res = await api.post("/api/forgot-password", { email });
 
-      // backend puede devolver res.data.token o res.data.resetLink
       let returnedToken = res.data?.token || "";
       if (!returnedToken && res.data?.resetLink) {
         returnedToken = extractTokenFromResetLink(res.data.resetLink);
       }
 
-      // Si backend devolvió token vacío pero msg indica token creado,
-      // mostramos mensaje y no habilitamos botones (evita falsos positivos)
       setMsg(res.data?.msg || "Token generado correctamente.");
 
       if (returnedToken) {
@@ -78,99 +71,126 @@ export default function ForgotPasswordPage() {
     } catch (err) {
       console.error("ForgotPassword error:", err);
       const backendMsg = err.response?.data?.msg;
-      // Forzar mensaje de error en rojo si backend dice que no existe
       setError(backendMsg || "Error inesperado al generar token");
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
-      <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
-        <h2 className="text-2xl font-bold text-gray-800 text-center mb-6">
+    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      
+      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
+        <div className="mx-auto h-16 w-16 bg-teal-100 rounded-2xl flex items-center justify-center text-teal-700 mb-6 shadow-md transform transition hover:scale-105">
+          <KeyRound size={32} />
+        </div>
+        <h2 className="text-3xl font-extrabold text-gray-900">
           Recuperar contraseña
         </h2>
+        <p className="mt-2 text-sm text-gray-500">
+          Introduce tu correo para obtener el token de recuperación.
+        </p>
+      </div>
 
-        <form onSubmit={handleSubmit}>
-          <label className="block mb-1 font-medium text-gray-700">
-            Correo electrónico
-          </label>
-          <input
-            type="email"
-            className="w-full border rounded p-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-300"
-            placeholder="tu@correo.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="bg-white py-8 px-4 shadow-xl shadow-gray-200/50 sm:rounded-2xl sm:px-10 border border-gray-100">
+          
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                Correo Electrónico
+              </label>
+              <div className="relative rounded-md shadow-sm">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Mail className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="email"
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 sm:text-sm transition placeholder-gray-400"
+                  placeholder="tu@correo.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
 
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
-          >
-            Generar Token
-          </button>
+            <button
+              type="submit"
+              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-lg shadow-teal-100 text-sm font-bold text-white bg-teal-600 hover:bg-teal-700 hover:shadow-teal-200 hover:-translate-y-0.5 transition-all duration-200"
+            >
+              Generar Token
+            </button>
+          </form>
 
-          <button
+          {/* Mensajes de Feedback */}
+          {msg && !error && (
+            <div className="mt-4 rounded-lg bg-green-50 p-4 border border-green-100 flex items-start gap-3 animate-in fade-in slide-in-from-top-2">
+              <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
+              <p className="text-sm text-green-700 font-medium">{msg}</p>
+            </div>
+          )}
+          
+          {error && (
+            <div className="mt-4 rounded-lg bg-red-50 p-4 border border-red-100 flex items-start gap-3 animate-in fade-in slide-in-from-top-2">
+              <AlertCircle className="h-5 w-5 text-red-500 shrink-0 mt-0.5" />
+              <p className="text-sm text-red-700 font-medium">{error}</p>
+            </div>
+          )}
+
+          {/* TOKEN GENERADO */}
+          {token && (
+            <div className="mt-6 p-4 bg-gray-50 border border-gray-200 rounded-xl">
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">
+                Token de Recuperación
+              </p>
+              
+              <div className="relative">
+                <textarea
+                  readOnly
+                  className="w-full p-3 border border-gray-300 rounded-lg bg-white text-sm font-mono text-gray-600 focus:outline-none focus:ring-1 focus:ring-teal-500 resize-none"
+                  value={token}
+                  rows={3}
+                />
+                <button
+                  type="button"
+                  onClick={async () => {
+                    const ok = await safeCopyToClipboard(token);
+                    if (ok) {
+                      setMsg("Token copiado al portapapeles");
+                      setTimeout(() => setMsg(""), 1800);
+                    } else {
+                      setError("No se pudo copiar automáticamente");
+                    }
+                  }}
+                  className="absolute top-2 right-2 p-1.5 bg-gray-100 hover:bg-gray-200 rounded-md text-gray-500 transition"
+                  title="Copiar"
+                >
+                  <Clipboard size={16} />
+                </button>
+              </div>
+
+              <button
+                type="button"
+                className="mt-3 w-full bg-teal-100 text-teal-700 font-bold py-2.5 rounded-lg hover:bg-teal-200 transition shadow-sm"
+                onClick={() => navigate("/reset-password", { state: { token, email } })}
+              >
+                Ir a restablecer contraseña &rarr;
+              </button>
+            </div>
+          )}
+
+          <div className="mt-8 border-t border-gray-100 pt-6">
+            <button
               type="button"
               onClick={() => navigate("/login", { replace: true }) }
-              className="mt-3 w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+              className="w-full flex justify-center items-center gap-2 text-sm font-medium text-gray-500 hover:text-teal-600 transition-colors group"
             >
-              Cancelar
+              <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+              Volver al inicio de sesión
             </button>
-        </form>
-
-        {msg && !error && (
-          <p className="text-green-600 mt-4 font-semibold">{msg}</p>
-        )}
-        {error && (
-          <p className="text-red-600 mt-4 font-semibold">{error}</p>
-        )}
-
-        {/* Si existe token, mostrar bloque con copiar + ir a reset */}
-        {token && (
-          <div className="mt-5 p-4 bg-gray-50 border rounded">
-            <p className="font-semibold mb-2">Tu token de recuperación:</p>
-
-            <textarea
-              readOnly
-              className="w-full p-2 border rounded bg-white"
-              value={token}
-              rows={3}
-            />
-
-            <button
-              type="button"
-              className="mt-2 w-full bg-gray-700 text-white py-2 rounded hover:bg-gray-800"
-              onClick={async () => {
-                const ok = await safeCopyToClipboard(token);
-                if (ok) {
-                  // pequeña notificación visual
-                  setMsg("Token copiado al portapapeles");
-                  setTimeout(() => setMsg(""), 1800);
-                } else {
-                  setError("No se pudo copiar el token automáticamente");
-                }
-              }}
-            >
-              Copiar Token
-            </button>
-
-            <button
-              type="button"
-              className="mt-3 w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
-              onClick={() =>
-                // Navegamos a /reset-password y pasamos token y email por state
-                navigate("/reset-password", { state: { token, email } })
-              }
-            >
-              Ir a restablecer contraseña
-            </button>
-
           </div>
-        )}
+
+        </div>
       </div>
     </div>
   );
 }
-
-
