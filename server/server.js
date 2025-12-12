@@ -1,3 +1,5 @@
+console.log("📌 SERVER.JS EJECUTÁNDOSE DE VERDAD");
+
 // ==================== DEPENDENCIAS ====================
 const express = require("express");
 const fs = require("fs");
@@ -33,6 +35,8 @@ const disponibilidadRoutes = require("./routes/disponibilidad");
 const valoracionesRoutes = require("./routes/valoraciones");
 const notificacionesRoutes = require("./routes/notificaciones");
 const iniciarCron = require("./services/cronService");
+console.log("📌 CRON IMPORTADO CORRECTAMENTE");
+
 
 // ==================== MONTAR RUTAS API ====================
 
@@ -44,6 +48,7 @@ app.use("/api/disponibilidad", disponibilidadRoutes);
 app.use("/api/valoraciones", valoracionesRoutes);
 app.use("/api/notificaciones", notificacionesRoutes);
 iniciarCron();
+console.log("📌 iniciarCron() INVOCADO");
 app.use("/api", authRoutes);
 
 // ==================== FRONTEND REACT ====================
