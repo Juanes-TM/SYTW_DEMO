@@ -120,7 +120,7 @@ export default function EditarCitaModal({
       <div className="bg-white rounded-2xl w-96 shadow-2xl overflow-hidden transform transition-all scale-100">
         
         {/* HEADER */}
-        <div className={`${headerColor} px-6 py-4 flex justify-between items-center`}>
+        <div className={"bg-teal-600 px-6 py-4 flex justify-between items-center"}>
           <h3 className="text-white font-bold text-lg">
             {isFisio ? "Gestionar Cita" : "Detalles Cita"}
           </h3>

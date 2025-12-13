@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import { AlertTriangle } from "lucide-react";
+
 
 // Lista de especialidades para el selector
 const ESPECIALIDADES = [
@@ -314,7 +316,7 @@ export default function UsuariosPage() {
         <div className="fixed inset-0 flex items-center justify-center z-50 transition-all duration-300">
           <div
             onClick={cerrarModal}
-            className="absolute inset-0 bg-gray-900 bg-opacity-40 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/30 backdrop-blur-md transition-all duration-300"
           ></div>
 
           <div className="relative bg-white p-8 rounded-3xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-100 animate-[fadeIn_0.3s_ease-out]">
@@ -384,8 +386,9 @@ export default function UsuariosPage() {
 
             {/* Indicador de cambios */}
             {formHasChanged && (
-              <div className="mt-4 p-2 bg-blue-50 text-blue-700 text-sm rounded-lg">
-                ⚠️ Tienes cambios sin guardar
+              <div className="mt-4 flex items-center gap-2 p-3 bg-yellow-50 text-red-700 text-sm rounded-lg">
+                <AlertTriangle size={18} className="shrink-0" />
+                <span>Tienes cambios sin guardar</span>
               </div>
             )}
           </div>

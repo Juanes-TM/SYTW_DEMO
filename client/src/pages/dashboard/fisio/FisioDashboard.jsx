@@ -438,12 +438,25 @@ export default function FisioDashboard() {
     ? `${formatHora(proximaDeHoy.startAt)} – ${proximaDeHoy.paciente?.nombre}`
     : "No hay más hoy";
 
-  const canceladasHoy = citasHoyTotal.filter((c) => c.estado === "cancelada").length;
+  const canceladasSemana = citas.filter((c) => {
+    const f = new Date(c.startAt);
+    return (
+      c.estado === "cancelada" &&
+      f >= hoy &&
+      f - hoy <= 7 * 24 * 60 * 60 * 1000
+    );
+  }).length;
+
   
   const citasSemanaTotal = citas.filter((c) => {
     const f = new Date(c.startAt);
-    return f - hoy <= 7 * 24 * 60 * 60 * 1000 && f >= hoy;
+    return (
+      f >= hoy &&
+      f - hoy <= 7 * 24 * 60 * 60 * 1000 &&
+      c.estado !== "cancelada"
+    );
   }).length;
+
 
 
   // --- RENDERIZADO ---
@@ -467,7 +480,7 @@ export default function FisioDashboard() {
       {/* 2. Resumen */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <ResumenCard title="Citas Hoy" value={citasHoyTotal.length} icon={<Calendar size={28} />} />
-        <ResumenCard title="Canceladas Hoy" value={canceladasHoy} icon={<Clock size={28} />} />
+        <ResumenCard title="Canceladas Semana" value={canceladasSemana} icon={<Clock size={28} />} />
         <ResumenCard title="Citas Semana" value={citasSemanaTotal} icon={<Calendar size={28} />} />
         <ResumenCard title="Siguiente (Hoy)" value={proximaCitaTexto} icon={<Users size={28} />} />
       </div>

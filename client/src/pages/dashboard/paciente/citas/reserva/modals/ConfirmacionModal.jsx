@@ -1,6 +1,7 @@
 // client/src/pages/dashboard/paciente/citas/reserva/modals/ConfirmacionModal.jsx
 
 import { useState, useEffect } from "react";
+import { Clock } from "lucide-react";
 
 export default function ConfirmacionModal({ isOpen, onClose, onConfirm, datos, loading }) {
   const [motivo, setMotivo] = useState("");
@@ -42,7 +43,7 @@ export default function ConfirmacionModal({ isOpen, onClose, onConfirm, datos, l
           </div>
 
           <div className="flex items-start gap-3 bg-amber-50 p-3 rounded-lg border border-amber-100 text-amber-800 text-sm">
-            <span className="text-xl">⏱</span>
+            <Clock size={20} className="mt-0.5 shrink-0" />
             <p className="mt-0.5">La sesión tiene una duración de <strong>60 minutos</strong>.</p>
           </div>
 

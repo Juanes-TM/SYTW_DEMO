@@ -7,7 +7,7 @@ export default function InfoCitaModal({ isOpen, onClose, cita, onRequestCancel }
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
 
-        <div className="bg-indigo-600 px-6 py-4 flex justify-between items-center">
+        <div className="bg-teal-600 px-6 py-4 flex justify-between items-center">
           <h3 className="text-lg font-semibold text-white">Mi Cita Reservada</h3>
           <button onClick={onClose} className="text-indigo-200 hover:text-white text-2xl">&times;</button>
         </div>
