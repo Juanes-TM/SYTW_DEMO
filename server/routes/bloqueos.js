@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
 const Bloqueo = require('../models/bloqueo');
+const Cita = require('../models/cita');
+const Notificacion = require('../models/notificacion');
+
 
 // GET /api/bloqueos - Listar mis bloqueos (Fisio)
 router.get('/', auth, async (req, res) => {
@@ -48,6 +51,31 @@ router.post('/', auth, async (req, res) => {
     });
 
     await nuevoBloqueo.save();
+
+    // ----------------------------------------
+    // CANCELAR CITAS DEL DÍA BLOQUEADO
+    // ----------------------------------------
+    const citasAfectadas = await Cita.find({
+      fisioterapeuta: req.userId,
+      startAt: { $gte: startAt, $lte: endAt },
+      estado: { $in: ['pendiente', 'confirmada'] }
+    }).populate('paciente', 'nombre apellido');
+
+    for (const cita of citasAfectadas) {
+      cita.estado = 'cancelada'; // Cambiar el estado de la cita
+      await cita.save(); // Guardar los cambios
+
+      // Crear y guardar la notificación de cancelación para el paciente
+      await Notificacion.create({
+        usuario: cita.paciente._id,
+        mensaje: `🚫 Tu cita del ${new Date(cita.startAt).toLocaleDateString('es-ES')} a las ${new Date(cita.startAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} ha sido cancelada porque el fisioterapeuta no está disponible ese día.`,
+        tipo: 'cancelacion',
+        citaId: cita._id
+      });
+    }
+
+    console.log(`Citas canceladas por bloqueo: ${citasAfectadas.length}`);
+
     res.status(201).json({ msg: 'Día bloqueado correctamente', bloqueo: nuevoBloqueo });
 
   } catch (err) {
