@@ -196,9 +196,9 @@ function ProximaCitaBanner({ citas }) {
   const proxima = citasFuturas[0];
 
   return (
-    <div className="p-6 rounded-2xl shadow-md bg-gradient-to-br from-teal-600 to-teal-700 text-white relative overflow-hidden">
+    <div className="p-6 rounded-2xl shadow-md bg-gradient-to-br from-teal-600 to-teal-700 text-white relative overflow-hidden z-0">
       <div className="absolute right-6 top-6 opacity-20 pointer-events-none z-0">
-        <Clock size={90} />
+        <Clock className="absolute top-[-15px] right-[-15px] text-white z-10" size={60} />
       </div>
 
       <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
