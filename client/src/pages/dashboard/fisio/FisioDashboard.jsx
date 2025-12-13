@@ -23,7 +23,7 @@ function CancelarModal({ isOpen, onClose, onConfirm, loading }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all scale-100">
         {/* Cabecera */}
         <div className="bg-red-50 p-4 border-b border-red-100 flex items-center gap-3">
@@ -342,22 +342,26 @@ export default function FisioDashboard() {
     try {
         const token = localStorage.getItem("token");
         // NOTA: Ajusta la URL si tu backend corre en otro puerto
-        const response = await fetch(`http://localhost:5000/api/citas/${citaSeleccionada._id}/cancelar`, {
-            method: 'PUT',
+        const response = await fetch(
+          `/api/citas/${citaSeleccionada._id}/estado`,
+          {
+            method: "PUT",
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
             },
-            body: JSON.stringify({ 
-                motivo: motivo,
-                canceladoPor: 'fisio' 
+            body: JSON.stringify({
+              estado: "cancelada"
             })
-        });
+          }
+        );
 
         if (!response.ok) throw new Error('Error al cancelar la cita');
 
-        // Recargar para ver cambios (o usar refetch si lo tienes)
-        window.location.reload(); 
+        // opción mínima y segura
+        setTimeout(() => {
+          window.location.reload();
+        }, 300);
         
     } catch (error) {
         console.error(error);
