@@ -13,6 +13,7 @@ import HistoryPage from "./pages/HistoryPage";
 import ValoracionForm from './pages/ValoracionPage';
 import ValoracionesList from './pages/ValoracionListPage';
 import MisValoraciones from './pages/MisValoraciones';
+import BloqueosPage from "./pages/dashboard/fisio/bloqueos/BloqueosPage";
 
 
 // --- DASHBOARDS PRINCIPALES ---
@@ -64,7 +65,7 @@ function App() {
         <Route path="fisio" element={<FisioDashboard />} />
         <Route path="fisio/disponibilidad" element={<DisponibilidadPage />} />
         <Route path="fisioterapeutas" element={<FisioterapeutasListPage />} />
-
+        <Route path="fisio/bloqueos" element={<BloqueosPage />} />
         <Route path="resenas" element={<ResenasDashboard />} />
 
         {/* --- ADMIN --- */}

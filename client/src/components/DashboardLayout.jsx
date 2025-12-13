@@ -1,5 +1,5 @@
 import { Outlet, Link, useNavigate } from "react-router-dom";
-import { LogOut, Home, Calendar, User, Users, Settings, Star } from "lucide-react";
+import { LogOut, Home, Calendar, User, Users, Settings, Star, CalendarOff} from "lucide-react";
 import NotificacionesBell from './NotificacionesBell';
 
 
@@ -82,6 +82,10 @@ export default function DashboardLayout() {
               <Link to="/dashboard/fisio/disponibilidad" className="flex items-center gap-3 px-3 py-2 rounded hover:bg-white/10 transition">
                 <Calendar size={20} />
                 <span>Disponibilidad</span>
+              </Link>
+              <Link to="/dashboard/fisio/bloqueos" className="flex items-center gap-3 px-3 py-2 rounded hover:bg-white/10 transition">
+                <CalendarOff size={20} />
+                <span>Mis Ausencias</span>
               </Link>
               <Link 
                 to="/dashboard/fisioterapeutas" 

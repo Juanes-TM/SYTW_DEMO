@@ -1,4 +1,4 @@
-console.log("📌 SERVER.JS EJECUTÁNDOSE DE VERDAD");
+console.log("SERVER.JS EJECUTÁNDOSE DE VERDAD");
 
 // ==================== DEPENDENCIAS ====================
 const express = require("express");
@@ -34,8 +34,9 @@ const fisioRoutes = require("./routes/fisioterapeutas");
 const disponibilidadRoutes = require("./routes/disponibilidad");
 const valoracionesRoutes = require("./routes/valoraciones");
 const notificacionesRoutes = require("./routes/notificaciones");
+const bloqueosRoutes = require("./routes/bloqueos");
 const iniciarCron = require("./services/cronService");
-console.log("📌 CRON IMPORTADO CORRECTAMENTE");
+console.log("CRON IMPORTADO CORRECTAMENTE");
 
 
 // ==================== MONTAR RUTAS API ====================
@@ -47,6 +48,7 @@ app.use("/api/profile", profileRoutes);
 app.use("/api/disponibilidad", disponibilidadRoutes);
 app.use("/api/valoraciones", valoracionesRoutes);
 app.use("/api/notificaciones", notificacionesRoutes);
+app.use("/api/bloqueos", bloqueosRoutes);
 iniciarCron();
 console.log("📌 iniciarCron() INVOCADO");
 app.use("/api", authRoutes);
