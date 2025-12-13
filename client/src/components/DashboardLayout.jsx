@@ -177,7 +177,12 @@ export default function DashboardLayout() {
 
             {/* Saludo simple */}
             <div className="text-right hidden sm:block">
-              <span className="block text-sm font-medium text-gray-700">Hola, {currentUser.nombre}</span>
+              <Link 
+                to="/profile" // Esto redirige a la página de perfil
+                className="block text-sm font-medium text-gray-700 cursor-pointer hover:text-teal-600 transition-all"
+              >
+                Hola, {currentUser.nombre}
+              </Link>
               <span className="block text-xs text-gray-400 text-right">
                 {new Date().toLocaleDateString()}
               </span>
