@@ -57,19 +57,38 @@ export default function NotificacionesBell() {
 
       {/* LISTA DESPLEGABLE */}
       {abierto && (
-        <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-xl z-50 overflow-hidden">
-          <div className="bg-gray-50 px-4 py-2 border-b border-gray-200 text-sm font-bold text-gray-700">
-            Notificaciones
+        <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-xl z-[200] overflow-hidden">
+
+          {/* HEADER FIJO */}
+          <div className="sticky top-0 bg-white border-b px-4 py-3 z-10">
+            <div className="flex justify-between items-center">
+              <span className="text-sm font-bold text-gray-700">
+                Notificaciones
+              </span>
+            </div>
           </div>
+
+          {/* LISTA CON SCROLL */}
           <ul className="max-h-64 overflow-y-auto">
             {notificaciones.length === 0 ? (
-              <li className="p-4 text-center text-gray-500 text-sm">No tienes notificaciones</li>
+              <li className="p-4 text-center text-gray-500 text-sm">
+                No tienes notificaciones
+              </li>
             ) : (
               notificaciones.map(noti => (
-                <li key={noti._id} className={`p-3 border-b text-sm ${noti.leida ? 'bg-white opacity-60' : 'bg-blue-50'}`}>
+                <li
+                  key={noti._id}
+                  className={`p-3 border-b text-sm ${
+                    noti.leida ? 'bg-white opacity-60' : 'bg-blue-50'
+                  }`}
+                >
                   <p className="text-gray-800 font-medium">{noti.mensaje}</p>
                   <p className="text-xs text-gray-400 mt-1">
-                    {new Date(noti.fecha).toLocaleDateString()} - {new Date(noti.fecha).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                    {new Date(noti.fecha).toLocaleDateString()} –{" "}
+                    {new Date(noti.fecha).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
                   </p>
                 </li>
               ))
@@ -77,6 +96,7 @@ export default function NotificacionesBell() {
           </ul>
         </div>
       )}
+
     </div>
   );
 }

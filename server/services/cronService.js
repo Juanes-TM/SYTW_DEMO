@@ -25,7 +25,7 @@ const iniciarCron = () => {
       for (const cita of citasProximas) {
         await Notificacion.create({
           usuario: cita.paciente._id,
-          mensaje: `⏰ Recordatorio: Tienes una cita mañana a las ${new Date(
+          mensaje: `🕑 Recordatorio: Tienes una cita mañana a las ${new Date(
             cita.startAt
           ).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
           tipo: "recordatorio",

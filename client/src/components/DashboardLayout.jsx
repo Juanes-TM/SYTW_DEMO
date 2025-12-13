@@ -163,7 +163,7 @@ export default function DashboardLayout() {
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
         
         {/* 1. HEADER SUPERIOR */}
-        <header className="bg-white h-16 shadow-sm flex items-center justify-between px-6 z-10">
+        <header className="bg-white h-16 shadow-sm flex items-center justify-between px-6 relative z-[100]">
           <h2 className="text-xl font-bold text-gray-700 capitalize">
              {/* Título dinámico simple */}
              Panel de {currentUser.rol}

@@ -231,7 +231,6 @@ router.put("/:id/estado", auth, async (req, res) => {
         "cita_cancelada",
         `La cita ${cita._id} fue cancelada por ${usuario.nombre} ${usuario.apellido} (${usuario.email}). Paciente: ${paciente.nombre} ${paciente.apellido}. Fisio: ${fisio.nombre} ${fisio.apellido}.`
       );
-      // 👇👇👇 COPIA Y PEGA ESTO JUSTO DESPUÉS DE registrarEvento 👇👇👇
 
       // --- INICIO LÓGICA NOTIFICACIÓN ---
       try {

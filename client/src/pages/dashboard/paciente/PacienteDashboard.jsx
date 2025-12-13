@@ -57,11 +57,11 @@ export default function PacienteDashboard() {
     <div className="max-w-6xl mx-auto space-y-8">
       
       {/* --- HERO SECTION --- */}
-      <div className="bg-gradient-to-r from-teal-600 to-teal-800 rounded-3xl p-8 text-white shadow-xl flex flex-col md:flex-row justify-between items-center relative overflow-hidden">
+      <div className="bg-gradient-to-r from-teal-600 to-teal-800 rounded-3xl p-8 text-white shadow-xl flex flex-col md:flex-row justify-between items-center relative overflow-hidden z-0">
         {/* Decoración de fondo */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full -mr-16 -mt-16 blur-3xl"></div>
         
-        <div className="relative z-10">
+        <div className="relative">
           <h1 className="text-3xl md:text-4xl font-bold mb-2">
             ¡Hola, {user.nombre}! 👋
           </h1>
