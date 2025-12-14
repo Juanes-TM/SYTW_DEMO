@@ -1,4 +1,5 @@
 // server/routes/valoraciones.js
+
 const express = require('express');
 const router = express.Router();
 const Valoracion = require('../models/valoraciones');
@@ -60,6 +61,7 @@ router.post('/crear', auth, async (req, res) => {
     });
 
     await nueva.save();
+    console.log(`Valoración creada por usuario ${req.userId} para fisio ${fisioId}`);
     
     return res.status(201).json({ msg: 'Valoración creada exitosamente', valoracion: nueva });
 
@@ -108,5 +110,50 @@ router.get('/mis-valoraciones', auth, async (req, res) => {
     res.status(500).json({ msg: 'Error obteniendo mis valoraciones' });
   }
 });
+
+// =====================================================================
+// RUTA: GET /api/valoraciones/todas
+// Devuelve TODAS las reseñas agrupadas por fisioterapeuta
+// =====================================================================
+router.get('/todas', async (req, res) => {
+  try {
+    const valoraciones = await Valoracion.find()
+      .populate('paciente', 'nombre apellidos')
+      .populate('fisio', 'nombre apellidos especialidad foto')
+      .sort({ fecha: -1 });
+
+    // Agrupar valoraciones por fisioterapeuta
+    const agrupadas = {};
+
+    valoraciones.forEach(v => {
+      const id = v.fisio?._id;
+      if (!id) return; // prevención por si falta populate
+
+      if (!agrupadas[id]) {
+        agrupadas[id] = {
+          fisio: v.fisio,
+          reseñas: [],
+          media: 0
+        };
+      }
+      agrupadas[id].reseñas.push(v);
+    });
+
+    // Calcular media de cada fisioterapeuta
+    for (const id in agrupadas) {
+      const r = agrupadas[id].reseñas;
+      agrupadas[id].media = (
+        r.reduce((sum, x) => sum + x.puntuacion, 0) / r.length
+      ).toFixed(2);
+    }
+
+    return res.json({ fisios: Object.values(agrupadas) });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: 'Error obteniendo todas las reseñas' });
+  }
+});
+
 
 module.exports = router;

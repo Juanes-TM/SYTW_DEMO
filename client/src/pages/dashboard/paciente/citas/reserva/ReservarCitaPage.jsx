@@ -4,23 +4,31 @@ import ConfirmacionModal from "./modals/ConfirmacionModal";
 import CancelarModal from "./modals/CancelarModal";
 import InfoCitaModal from "./modals/InfoCitaModal";
 import ConflictoModal from "./modals/ConflictoModal";
+import BuscadorFisios from "./BuscadorFisios"; 
 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../../../../services/api";
 
 // ==========================================
-// PÁGINA PRINCIPAL
+// PÁGINA PRINCIPAL: RESERVA DE CITAS
 // ==========================================
 export default function ReservarCitaPage() {
   const navigate = useNavigate();
-  
   const token = localStorage.getItem("token");
-  const currentUser = JSON.parse(localStorage.getItem("fisioUser") || "{}").user || {};
 
-  const [fisios, setFisios] = useState([]);
+  // --- ESTADOS DE DATOS ---
+  const [fisios, setFisios] = useState([]); // Lista completa fusionada
+  const [fisiosFiltrados, setFisiosFiltrados] = useState([]);
   
-  // 1. INICIALIZAR LEYENDO DESDE LOCALSTORAGE
+  // ESTADOS DEL FILTRO
+  const [filtros, setFiltros] = useState({
+    texto: "",
+    especialidad: "",
+    minRating: 0
+  });
+
+  // ESTADO DE SELECCIÓN Y CALENDARIO
   const [fisioId, setFisioId] = useState(
     localStorage.getItem('lastFisioId') || ""
   );
@@ -54,37 +62,99 @@ export default function ReservarCitaPage() {
     return `${h.toString().padStart(2, '0')}:00`;
   });
 
-  // 1. Cargar Fisioterapeutas
+  // =========================================================
+  // 1. CARGA DE DATOS (FUSIÓN FISIOS + VALORACIONES)
+  // =========================================================
   useEffect(() => {
-    const cargarFisios = async () => {
+    const cargarDatosFusionados = async () => {
       try {
-        const res = await api.get("/api/fisioterapeutas", {
-           headers: { Authorization: `Bearer ${token}` }
-        }); 
-        setFisios(Array.isArray(res.data) ? res.data : []);
+        // Lanzamos las dos peticiones en paralelo para mayor velocidad
+        const [resFisios, resValoraciones] = await Promise.all([
+          api.get("/api/fisioterapeutas", { headers: { Authorization: `Bearer ${token}` } }),
+          api.get("/api/valoraciones/todas") // Endpoint público o protegido según tu backend
+        ]);
+
+        const listaBaseFisios = Array.isArray(resFisios.data) ? resFisios.data : [];
+        const listaValoraciones = resValoraciones.data.fisios || []; // Estructura basada en ReseñasDashboard
+
+        // --- MERGE (FUSIÓN) ---
+        const fisiosCompletos = listaBaseFisios.map((f) => {
+          // Buscamos si este fisio tiene datos en el array de valoraciones
+          // En ReseñasDashboard, 'grupo.fisio._id' es la clave
+          const datosExtra = listaValoraciones.find(v => v.fisio._id === f._id);
+
+          return {
+            ...f,
+            // Si encontramos datos, usamos la media. Si no, 0.
+            rating: datosExtra ? Number(datosExtra.media) : 0,
+            totalValoraciones: datosExtra ? datosExtra.reseñas.length : 0
+          };
+        });
+        
+        setFisios(fisiosCompletos);
+        setFisiosFiltrados(fisiosCompletos); // Inicializamos filtrados
+
       } catch (err) {
-        console.error("Error cargando fisios", err);
+        console.error("Error cargando datos fusionados:", err);
+        // Fallback: Si falla la fusión, intentamos cargar solo los fisios sin rating
         try {
-             const res2 = await api.get("/api/users?rol=fisioterapeuta", {
-                headers: { Authorization: `Bearer ${token}` }
-             });
-             setFisios(Array.isArray(res2.data) ? res2.data : []);
-        } catch(e) { console.error(e); }
+            const resFallback = await api.get("/api/users?rol=fisioterapeuta", {
+              headers: { Authorization: `Bearer ${token}` }
+            });
+            const dataFallback = Array.isArray(resFallback.data) ? resFallback.data : [];
+            setFisios(dataFallback);
+            setFisiosFiltrados(dataFallback);
+        } catch(e) {}
       }
     };
-    cargarFisios();
+
+    cargarDatosFusionados();
   }, [token]);
-  
-  // 2. PERSISTENCIA: Guardar el fisioId seleccionado en localStorage
+
+  // =========================================================
+  // 2. LÓGICA DE FILTRADO EN TIEMPO REAL
+  // =========================================================
   useEffect(() => {
-      localStorage.setItem('lastFisioId', fisioId);
+    let resultado = fisios;
+
+    // Filtro Texto (Nombre o Apellido)
+    if (filtros.texto) {
+      const lower = filtros.texto.toLowerCase();
+      resultado = resultado.filter(f => 
+        `${f.nombre} ${f.apellido}`.toLowerCase().includes(lower)
+      );
+    }
+
+    // Filtro Especialidad
+    if (filtros.especialidad) {
+      resultado = resultado.filter(f => 
+         f.especialidad === filtros.especialidad
+      );
+    }
+
+    // Filtro Rating
+    if (filtros.minRating > 0) {
+      resultado = resultado.filter(f => 
+         (f.rating || 0) >= filtros.minRating
+      );
+    }
+
+    setFisiosFiltrados(resultado);
+  }, [filtros, fisios]);
+  
+  // Persistencia de selección
+  useEffect(() => {
+      if(fisioId) localStorage.setItem('lastFisioId', fisioId);
   }, [fisioId]);
 
 
-  // 3. Cargar Datos Completos
+  // =========================================================
+  // 3. CARGA DE CALENDARIO (SIN CAMBIOS)
+  // =========================================================
   useEffect(() => {
     if (!fisioId) return;
     recargarDatos();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fisioId, lunesSemana, token]);
 
   const recargarDatos = async () => {
@@ -99,9 +169,7 @@ export default function ReservarCitaPage() {
       
       const citasFiltradas = resCitas.data.filter(c => {
         const d = new Date(c.startAt);
-        
         const idFisioCita = (c.fisioterapeuta?._id || c.fisioterapeuta || '').toString();
-
         const esDelFisioActual = idFisioCita === fisioId; 
         
         return esDelFisioActual && d >= lunesSemana && d <= finSemana && c.estado !== 'cancelada';
@@ -178,9 +246,10 @@ export default function ReservarCitaPage() {
     return lunesSemana > getLunesActual();
   }
 
-  // LÓGICA MAESTRA DE ESTADO
+  // LÓGICA MAESTRA DE ESTADO DEL SLOT
   function getEstadoSlot(diaObj, horaStr) {
     const fechaStr = diaObj.toISOString().split('T')[0];
+
     const nombreDia = diaObj.toLocaleDateString('es-ES', { weekday: 'long' }).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     
     if (esPasado(diaObj, horaStr)) return { estado: 'pasado' };
@@ -256,14 +325,10 @@ export default function ReservarCitaPage() {
 
     } catch (err) {
       setModalReservaOpen(false);
-      
       const errorMsg = err.response?.data?.msg || "Error desconocido al intentar reservar la cita.";
-      
       setMensajeConflicto(errorMsg);
       setModalConflictoOpen(true);
-      
       recargarDatos();
-
     } finally {
       setReserving(false);
     }
@@ -281,7 +346,6 @@ export default function ReservarCitaPage() {
         await api.put(`/api/citas/${citaACancelarId}/estado`, { estado: 'cancelada' }, {
             headers: { Authorization: `Bearer ${token}` }
         });
-        
         setModalCancelOpen(false);
         setModalInfoOpen(false);
         recargarDatos(); 
@@ -302,24 +366,24 @@ export default function ReservarCitaPage() {
   const esSemanaActual = lunesSemana.getTime() === getLunesActual().getTime();
   const mesActualStr = lunesSemana.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
 
+  // =========================================================
+  // RENDERIZADO
+  // =========================================================
   return (
     <div className="p-8 bg-gray-50 min-h-screen font-sans">
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-teal-700 mb-2">Reservar Cita</h1>
-        <p className="text-gray-600 text-sm">Selecciona tu fisioterapeuta y elige una franja disponible en el calendario. Todas las citas son de <b>60 minutos</b>.</p>
+        <p className="text-gray-600 text-sm">Encuentra a tu especialista ideal y reserva en segundos.</p>
       </div>
 
-      <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 mb-6 max-w-3xl">
-        <label className="block mb-1 text-sm font-medium text-gray-700">Fisioterapeuta</label>
-        <select 
-            value={fisioId} 
-            onChange={(e) => setFisioId(e.target.value)} 
-            className="border border-gray-300 px-3 py-2 rounded-lg w-full text-sm focus:ring-2 focus:ring-teal-500 outline-none"
-        >
-          <option value="">-- Elige un fisioterapeuta --</option>
-          {fisios.map((f) => <option key={f._id} value={f._id}>{f.nombre} {f.apellido}</option>)}
-        </select>
-      </div>
+      {/* --- BUSCADOR --- */}
+      <BuscadorFisios 
+         fisios={fisiosFiltrados}
+         fisioSeleccionadoId={fisioId}
+         onSelectFisio={setFisioId}
+         filtros={filtros}
+         setFiltros={setFiltros}
+      />
 
       {esSemanaFutura() && (
         <div className="mb-6 bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r shadow-sm">
@@ -336,10 +400,12 @@ export default function ReservarCitaPage() {
       {fisioId ? (
         <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
           <div className="flex items-center justify-between px-6 py-4 bg-teal-50 border-b border-teal-100">
+
              <button onClick={() => cambiarSemana(-1)} disabled={esSemanaActual} className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-full transition-all ${esSemanaActual ? "text-gray-300 cursor-not-allowed" : "text-teal-700 bg-white hover:bg-teal-600 hover:text-white shadow-sm"}`}>
                 ← Anterior
              </button>
              <h2 className="text-xl font-bold text-teal-900 capitalize">{mesActualStr}</h2>
+
              <button onClick={() => cambiarSemana(1)} className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-teal-700 bg-white rounded-full shadow-sm hover:bg-teal-600 hover:text-white transition-all">
                 Siguiente →
              </button>
@@ -389,6 +455,8 @@ export default function ReservarCitaPage() {
                             cellClass += "bg-gray-50 border-transparent text-gray-300 cursor-not-allowed";
                             contenido = "-";
                             break;
+                          default:
+                            break;
                         }
 
                         return (
@@ -431,8 +499,7 @@ export default function ReservarCitaPage() {
         onConfirm={handleConfirmarCancelacion} 
         loading={cancelling} 
       />
-      
-      {/* NUEVO MODAL DE CONFLICTO */}
+       
       <ConflictoModal
         isOpen={modalConflictoOpen}
         onClose={() => setModalConflictoOpen(false)}

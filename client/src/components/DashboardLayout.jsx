@@ -1,12 +1,16 @@
 import { Outlet, Link, useNavigate } from "react-router-dom";
-import { LogOut, Home, Calendar, User, Users, Settings } from "lucide-react";
+import { LogOut, Home, Calendar, User, Users, Settings, Star, CalendarOff} from "lucide-react";
+import NotificacionesBell from './NotificacionesBell';
+
 
 export default function DashboardLayout() {
   const navigate = useNavigate();
 
   const saved = JSON.parse(localStorage.getItem("fisioUser") || "{}");
   const currentUser = saved.user || {};
-  const token = saved.token || localStorage.getItem("token");
+  
+  // No necesitamos 'token' aquí para renderizar, pero si lo usas para otras cosas está bien.
+  // const token = saved.token || localStorage.getItem("token");
 
   const handleLogout = () => {
     localStorage.removeItem("fisioUser");
@@ -17,48 +21,85 @@ export default function DashboardLayout() {
 
   return (
     <div className="min-h-screen flex bg-gray-50">
-      {/* Sidebar */}
+      {/* === SIDEBAR (Barra Lateral Izquierda) === */}
       <aside 
         className="w-64 text-white flex flex-col shadow-lg fixed h-full top-0 left-0 z-20"
         style={{
-          backgroundImage: 'url(/img/fisiotrack-bg-waves-last.png)', // Imagen de fondo
+          backgroundImage: 'url(/img/fisiotrack-bg-waves-last.png)', 
           backgroundSize: 'cover',
           backgroundPosition: 'center',
+          backgroundColor: '#0f766e' // Color de fondo por si falla la imagen (Teal-700)
         }}
       >
-        <div className="flex justify-center p-4 text-2xl font-semibold border-b border-teal-600">
-          <img src="/img/fisiotrack-logo-white.png" alt="FisioTrack Logo" className="w-28 mb-6" />
+        {/* Logo */}
+        <div className="flex justify-center p-4 text-2xl font-semibold border-b border-teal-500/30 backdrop-blur-sm">
+          {/* Si no tienes la imagen, pon un texto provisional o asegúrate de que la ruta sea correcta */}
+          <img src="/img/fisiotrack-logo-white.png" alt="FisioTrack" className="w-28 mb-2" />
         </div>
 
-        <nav className="flex-1 p-4 space-y-6 overflow-y-auto">
+        {/* Menú de Navegación */}
+        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
           {/* PACIENTE */}
           {currentUser.rol === "cliente" && (
             <>
-              <Link to="/dashboard/paciente" className="flex items-center gap-3 px-3 py-2 rounded hover:bg-teal-500 transition">
+              <Link to="/dashboard/paciente" className="flex items-center gap-3 px-3 py-2 rounded hover:bg-white/10 transition">
                 <Home size={20} />
                 <span>Inicio</span>
               </Link>
-              <Link to="/dashboard/paciente/reservar" className="flex items-center gap-3 px-3 py-2 rounded hover:bg-teal-500 transition">
+              <Link to="/dashboard/paciente/reservar" className="flex items-center gap-3 px-3 py-2 rounded hover:bg-white/10 transition">
                 <Calendar size={20} />
                 <span>Reservar cita</span>
               </Link>
-              <Link to="/dashboard/paciente/citas" className="flex items-center gap-3 px-3 py-2 rounded hover:bg-teal-500 transition">
+              <Link to="/dashboard/paciente/citas" className="flex items-center gap-3 px-3 py-2 rounded hover:bg-white/10 transition">
                 <Calendar size={20} />
                 <span>Calendario</span>
               </Link>
+              <Link 
+                to="/dashboard/fisioterapeutas" 
+                className="flex items-center gap-3 px-3 py-2 rounded hover:bg-teal-500 transition"
+              >
+                <Users size={20} />
+                <span>Nuestro Equipo</span>
+              </Link>
+              <Link 
+                to="/dashboard/resenas" 
+                className="flex items-center gap-3 px-3 py-2 rounded hover:bg-white/10 transition"
+              >
+                <Star size={20} />
+                <span>Reseñas</span>
+              </Link>
+
             </>
           )}
 
           {/* FISIO */}
           {currentUser.rol === "fisioterapeuta" && (
             <>
-              <Link to="/dashboard/fisio" className="flex items-center gap-3 px-3 py-2 rounded hover:bg-teal-500 transition">
+              <Link to="/dashboard/fisio" className="flex items-center gap-3 px-3 py-2 rounded hover:bg-white/10 transition">
                 <User size={20} />
-                <span>Panel de Información</span>
+                <span>Panel Info</span>
               </Link>
-              <Link to="/dashboard/fisio/disponibilidad" className="flex items-center gap-3 px-3 py-2 rounded hover:bg-teal-500 transition">
+              <Link to="/dashboard/fisio/disponibilidad" className="flex items-center gap-3 px-3 py-2 rounded hover:bg-white/10 transition">
                 <Calendar size={20} />
                 <span>Disponibilidad</span>
+              </Link>
+              <Link to="/dashboard/fisio/bloqueos" className="flex items-center gap-3 px-3 py-2 rounded hover:bg-white/10 transition">
+                <CalendarOff size={20} />
+                <span>Mis Ausencias</span>
+              </Link>
+              <Link 
+                to="/dashboard/fisioterapeutas" 
+                className="flex items-center gap-3 px-3 py-2 rounded hover:bg-teal-500 transition"
+              >
+                <Users size={20} />
+                <span>Nuestro Equipo</span>
+              </Link>
+              <Link 
+                to="/dashboard/resenas" 
+                className="flex items-center gap-3 px-3 py-2 rounded hover:bg-white/10 transition"
+              >
+                <Star size={20} />
+                <span>Reseñas</span>
               </Link>
             </>
           )}
@@ -66,46 +107,94 @@ export default function DashboardLayout() {
           {/* ADMIN */}
           {currentUser.rol === "admin" && (
             <>
-              <Link to="/dashboard/admin" className="flex items-center gap-3 px-3 py-2 rounded hover:bg-teal-500 transition">
+              <Link to="/dashboard/admin" className="flex items-center gap-3 px-3 py-2 rounded hover:bg-white/10 transition">
                 <Settings size={20} />
-                <span>Panel del Admin</span>
+                <span>Admin Panel</span>
               </Link>
-              <Link to="/dashboard/admin/usuarios" className="flex items-center gap-3 px-3 py-2 rounded hover:bg-teal-500 transition">
+              <Link to="/dashboard/admin/usuarios" className="flex items-center gap-3 px-3 py-2 rounded hover:bg-white/10 transition">
                 <Users size={20} />
-                <span>Gestión de Usuarios</span>
+                <span>Usuarios</span>
+              </Link>
+              <Link 
+                to="/dashboard/fisioterapeutas" 
+                className="flex items-center gap-3 px-3 py-2 rounded hover:bg-teal-500 transition"
+              >
+                <Users size={20} />
+                <span>Nuestro Equipo</span>
+              </Link>
+              <Link 
+                to="/dashboard/resenas" 
+                className="flex items-center gap-3 px-3 py-2 rounded hover:bg-white/10 transition"
+              >
+                <Star size={20} />
+                <span>Reseñas</span>
               </Link>
             </>
           )}
         </nav>
 
-        {/* Bloque de sesión activa */}
-        <div className="p-4 border-t border-teal-600 text-sm text-gray-100">
+        {/* Footer del Sidebar (Info Usuario + Logout) */}
+        <div className="p-4 border-t border-teal-500/30 bg-black/10 backdrop-blur-sm">
           {currentUser.nombre && (
-            <div className="mb-4 flex items-center gap-6 bg-teal-550 bg-opacity-90 rounded-xl py-3 px-4 shadow-md hover:shadow-xl transition-all duration-300">
-              {/* Icono de usuario */}
-              <User size={28} className="text-white" />
-              <div className="text-white">
-                <p className="text-gray-300 text-xs uppercase tracking-wide mb-1">Sesión activa</p>
-                <p className="font-semibold text-lg">{currentUser.nombre} {currentUser.apellido}</p>
-                <p className="text-xs italic text-gray-400">Rol: {currentUser.rol}</p>
+            <div className="mb-4 flex items-center gap-3">
+              <div className="bg-white/20 p-2 rounded-full">
+                <User size={24} className="text-white" />
+              </div>
+              <div className="overflow-hidden">
+                <p className="font-semibold text-sm truncate">{currentUser.nombre} {currentUser.apellido}</p>
+                <p className="text-xs text-teal-100 capitalize">{currentUser.rol}</p>
               </div>
             </div>
           )}
 
           <button
             onClick={handleLogout}
-            className="w-full py-3 bg-red-600 hover:bg-red-700 rounded text-white font-semibold mt-4 transition-all transform hover:scale-105"
+            className="w-full py-2 bg-red-600/90 hover:bg-red-700 rounded text-white text-sm font-semibold flex items-center justify-center gap-2 transition"
           >
-            <LogOut size={18} className="inline-block mr-2" /> Cerrar sesión
+            <LogOut size={16} /> Cerrar sesión
           </button>
         </div>
       </aside>
 
-      {/* Contenido principal */}
-      <div className="w-64 flex-shrink-0" aria-hidden="true"></div>
-      <main className="flex-1 p-6 overflow-y-auto">
-        <Outlet />
-      </main>
+      {/* Espaciador para el sidebar fijo */}
+      <div className="w-64 flex-shrink-0 hidden md:block"></div>
+
+      {/* === ZONA PRINCIPAL === */}
+      <div className="flex-1 flex flex-col h-screen overflow-hidden">
+        
+        {/* 1. HEADER SUPERIOR */}
+        <header className="bg-white h-16 shadow-sm flex items-center justify-between px-6 relative z-[100]">
+          <h2 className="text-xl font-bold text-gray-700 capitalize">
+             {/* Título dinámico simple */}
+             Panel de {currentUser.rol}
+          </h2>
+
+          <div className="flex items-center gap-6">
+            {/* --- CAMPANA DE NOTIFICACIONES DE CITAS --- */}
+            <div className="relative">
+               <NotificacionesBell />
+            </div>
+
+            {/* Saludo simple */}
+            <div className="text-right hidden sm:block">
+              <Link 
+                to="/profile" // Esto redirige a la página de perfil
+                className="block text-sm font-medium text-gray-700 cursor-pointer hover:text-teal-600 transition-all"
+              >
+                Hola, {currentUser.nombre}
+              </Link>
+              <span className="block text-xs text-gray-400 text-right">
+                {new Date().toLocaleDateString()}
+              </span>
+            </div>
+          </div>
+        </header>
+
+        {/* 2. CONTENIDO SCROLLEABLE */}
+        <main className="flex-1 overflow-y-auto p-6 bg-gray-50">
+          <Outlet />
+        </main>
+      </div>
     </div>
   );
 }

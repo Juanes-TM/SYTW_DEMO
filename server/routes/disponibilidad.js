@@ -1,4 +1,3 @@
-// server/routes/disponibilidad.js
 const express = require("express");
 const router = express.Router();
 
@@ -7,9 +6,8 @@ const DisponibilidadSemanal = require("../models/disponibilidadSemanal");
 const DisponibilidadDia = require("../models/disponibilidadDia");
 const Cita = require("../models/cita");
 const User = require("../models/user");
+const Bloqueo = require("../models/bloqueo"); // <--- NUEVO IMPORT
 const registrarEvento = require("../utils/registrarEvento");
-
-
 
 // ==================== HELPERS ====================
 
@@ -80,7 +78,6 @@ async function soloFisioOAdmin(req, res, next) {
 
 // ==================== RUTAS SEMANALES ====================
 
-// GET /api/disponibilidad/semana/:fisioId
 router.get("/semana/:fisioId", auth, async (req, res) => {
   try {
     const { fisioId } = req.params;
@@ -88,13 +85,7 @@ router.get("/semana/:fisioId", auth, async (req, res) => {
     const doc = await DisponibilidadSemanal.findOne({ fisio: fisioId }).lean();
 
     const baseDias = [
-      "lunes",
-      "martes",
-      "miercoles",
-      "jueves",
-      "viernes",
-      "sabado",
-      "domingo"
+      "lunes", "martes", "miercoles", "jueves", "viernes", "sabado", "domingo"
     ].map((nombre) => ({
       nombre,
       horas: []
@@ -123,7 +114,6 @@ router.get("/semana/:fisioId", auth, async (req, res) => {
   }
 });
 
-// PUT /api/disponibilidad/semana
 router.put("/semana", auth, soloFisioOAdmin, async (req, res) => {
   try {
     const userId = req.userId;
@@ -133,22 +123,14 @@ router.put("/semana", auth, soloFisioOAdmin, async (req, res) => {
       return res.status(400).json({ msg: "Estructura de dias no válida" });
     }
 
-    // 🔥 Convertir el array [{nombre, horas}] a diccionario {lunes: [...], ...}
     const diasMap = {};
     for (const d of dias) {
       diasMap[d.nombre] = d.horas || [];
     }
 
-    // Construcción ordenada y validada
     const diasArray = [];
     for (const nombre of [
-      "lunes",
-      "martes",
-      "miercoles",
-      "jueves",
-      "viernes",
-      "sabado",
-      "domingo"
+      "lunes", "martes", "miercoles", "jueves", "viernes", "sabado", "domingo"
     ]) {
       const horas = diasMap[nombre] || [];
 
@@ -237,7 +219,6 @@ router.get("/dia", auth, async (req, res) => {
   }
 });
 
-// ... (RESTO DEL ARCHIVO SIN CAMBIOS)
 router.post("/dia", auth, soloFisioOAdmin, async (req, res) => {
   try {
     const userId = req.userId;
@@ -271,14 +252,12 @@ router.post("/dia", auth, soloFisioOAdmin, async (req, res) => {
       { upsert: true, new: true, setDefaultsOnInsert: true }
     );
 
-
     const fisio = await User.findById(userId).select("nombre apellido email");
 
     await registrarEvento(
       "disponibilidad_modificada",
       `El fisioterapeuta ${fisio.nombre} ${fisio.apellido} (${fisio.email}) actualizó su disponibilidad para el día ${fechaNorm.toLocaleDateString()}.`
     );
-
 
     return res.status(200).json({
       msg: "Disponibilidad del día actualizada",
@@ -327,6 +306,30 @@ router.get("/intervalos", auth, async (req, res) => {
     }
 
     const fechaNorm = normalizarFecha(fecha);
+    const fechaFinDia = new Date(fechaNorm);
+    fechaFinDia.setHours(23, 59, 59, 999);
+
+    // ----------------------------------------------------
+    // 1. VERIFICAR BLOQUEOS (VACACIONES/AUSENCIAS) - NUEVO
+    // ----------------------------------------------------
+    const bloqueo = await Bloqueo.findOne({
+      fisioterapeuta: fisioId,
+      startAt: { $lte: fechaFinDia },
+      endAt: { $gte: fechaNorm }
+    });
+
+    if (bloqueo) {
+      // Si el día está bloqueado, no hay intervalos libres
+      return res.status(200).json({
+        fisio: fisioId,
+        fecha: fechaNorm,
+        intervalosLibres: [], // Lista vacía
+        bloqueado: true,
+        motivoBloqueo: bloqueo.motivo
+      });
+    }
+    // ----------------------------------------------------
+
     const fechaSiguiente = new Date(fechaNorm);
     fechaSiguiente.setDate(fechaSiguiente.getDate() + 1);
 

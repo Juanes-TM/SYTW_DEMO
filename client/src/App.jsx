@@ -13,6 +13,7 @@ import HistoryPage from "./pages/HistoryPage";
 import ValoracionForm from './pages/ValoracionPage';
 import ValoracionesList from './pages/ValoracionListPage';
 import MisValoraciones from './pages/MisValoraciones';
+import BloqueosPage from "./pages/dashboard/fisio/bloqueos/BloqueosPage";
 
 
 // --- DASHBOARDS PRINCIPALES ---
@@ -25,6 +26,10 @@ import CitasIndex from "./pages/dashboard/paciente/citas/CitasIndex";
 import DisponibilidadPage from "./pages/dashboard/fisio/disponibilidad/DisponibilidadPage";
 import UsuariosPage from "./pages/dashboard/admin/usuarios/UsuariosPage";
 import ReservarCitaPage from "./pages/dashboard/paciente/citas/reserva/ReservarCitaPage";
+import FisioterapeutasListPage from "./pages/FisioterapeutasListPage";
+import ResenasDashboard from "./pages/dashboard/ResenasDashboard";
+
+
 
 function App() {
   return (
@@ -59,10 +64,14 @@ function App() {
         {/* --- FISIO --- */}
         <Route path="fisio" element={<FisioDashboard />} />
         <Route path="fisio/disponibilidad" element={<DisponibilidadPage />} />
+        <Route path="fisioterapeutas" element={<FisioterapeutasListPage />} />
+        <Route path="fisio/bloqueos" element={<BloqueosPage />} />
+        <Route path="resenas" element={<ResenasDashboard />} />
 
         {/* --- ADMIN --- */}
         <Route path="admin" element={<AdminDashboard />} />
         <Route path="admin/usuarios" element={<UsuariosPage />} />
+
       </Route>
 
       {/* Ruta protegida exclusiva para admins (puedes mantenerla si la usas) */}
