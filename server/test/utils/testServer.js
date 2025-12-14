@@ -10,5 +10,8 @@ app.use("/api/profile", require("../../routes/profile"));
 app.use("/api/disponibilidad", require("../../routes/disponibilidad"));
 app.use("/api/fisioterapeutas", require("../../routes/fisioterapeutas"));
 app.use("/api", require("../../routes/auth"));
+app.use("/api/bloqueos", require("../../routes/bloqueos"));
+app.use("/api/notificaciones", require("../../routes/notificaciones"));
+app.use("/api/valoraciones", require("../../routes/valoraciones"));
 
 module.exports = app;
