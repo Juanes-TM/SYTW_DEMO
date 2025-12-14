@@ -1,16 +1,14 @@
-// src/hooks/useFisioterapeutas.test.js
 import { renderHook, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { useFisioterapeutas } from './useFisioterapeutas';
+import { useFisioterapeutas } from '../../src/hooks/useFisioterapeutas';
 
-// Mock correcto de la API
-vi.mock('../services/api', () => ({
+vi.mock('../../src/services/api', () => ({
   default: {
     get: vi.fn()
   }
 }));
 
-import api from '../services/api';
+import api from '../../src/services/api';
 
 describe('useFisioterapeutas', () => {
   beforeEach(() => {
@@ -26,7 +24,6 @@ describe('useFisioterapeutas', () => {
 
     const { result } = renderHook(() => useFisioterapeutas());
 
-    // Verificar estado inicial
     expect(result.current.loading).toBe(true);
     expect(result.current.fisios).toEqual([]);
 
@@ -34,7 +31,6 @@ describe('useFisioterapeutas', () => {
       expect(result.current.loading).toBe(false);
     });
 
-    // Verificar estado final - usar fisios en lugar de fisioterapeutas
     expect(result.current.fisios).toEqual(mockFisios);
     expect(api.get).toHaveBeenCalledWith('/api/fisioterapeutas');
   });

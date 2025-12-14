@@ -7,7 +7,7 @@ export default defineConfig({
   test: {
     globals: true,            // Permite usar describe, test, expect sin importarlos
     environment: 'jsdom',     // Simula el navegador
-    setupFiles: './src/setupTests.js', // Archivo de configuración inicial
+    setupFiles: './test/setupTests.js', // Archivo de configuración inicial
     css: true, 			// Procesa CSS (útil si tus clases afectan la lógica)
   },
 })

@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, test, expect, vi, beforeEach } from 'vitest';
-import LoginPage from './LoginPage';
+import LoginPage from '../../src/pages/LoginPage';
 
 // --- 1. MOCKS (Simulaciones) ---
 
@@ -22,14 +22,13 @@ vi.mock('react-redux', () => ({
 }));
 
 // Simulamos tu servicio de API (Axios)
-// OJO: La ruta debe coincidir con donde importas 'api' en LoginPage
-vi.mock('../services/api', () => ({
+vi.mock('../../src/services/api', () => ({
   default: {
     post: vi.fn(),
   },
 }));
 
-import api from '../services/api'; // Importamos el mock para manipularlo
+import api from '../../src/services/api';
 
 describe('LoginPage', () => {
   
@@ -40,11 +39,11 @@ describe('LoginPage', () => {
   test('Debe renderizar el formulario correctamente', () => {
     render(<LoginPage />);
 
-    // Verificamos que existen los inputs por su placeholder (según tu código)
+    // Verificamos inputs
     expect(screen.getByPlaceholderText('Correo')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Contraseña')).toBeInTheDocument();
     
-    // Verificamos el botón por su texto
+    // Verificamos el botón
     expect(screen.getByRole('button', { name: /iniciar sesión/i })).toBeInTheDocument();
   });
 
@@ -54,7 +53,6 @@ describe('LoginPage', () => {
     const emailInput = screen.getByPlaceholderText('Correo');
     const passwordInput = screen.getByPlaceholderText('Contraseña');
 
-    // Simulamos que el usuario escribe
     fireEvent.change(emailInput, { target: { value: 'paciente@test.com' } });
     fireEvent.change(passwordInput, { target: { value: '123456' } });
 
@@ -68,7 +66,6 @@ describe('LoginPage', () => {
     const submitButton = screen.getByRole('button', { name: /iniciar sesión/i });
     fireEvent.click(submitButton);
 
-    // Según tu lógica "validate", debería salir este error
     expect(screen.getByText('Debes escribir tu contraseña')).toBeInTheDocument();
   });
 
@@ -76,32 +73,31 @@ describe('LoginPage', () => {
     // Configuramos el mock para que la API responda éxito
     api.post.mockResolvedValueOnce({
       data: {
-        user: { _id: '1', nombre: 'Test', rol: 'paciente' },
+        // Usamos 'cliente' que es el rol estándar en tu sistema, 
+        // aunque el 'else' del código lo manejaría igual.
+        user: { _id: '1', nombre: 'Test', apellido: 'User', email: 'paciente@test.com', rol: 'cliente' },
         token: 'fake-token-123'
       }
     });
 
     render(<LoginPage />);
 
-    // Rellenar formulario
     fireEvent.change(screen.getByPlaceholderText('Correo'), { target: { value: 'paciente@test.com' } });
     fireEvent.change(screen.getByPlaceholderText('Contraseña'), { target: { value: '123456' } });
 
-    // Enviar
     fireEvent.click(screen.getByRole('button', { name: /iniciar sesión/i }));
 
-    // Esperar a que la promesa se resuelva
     await waitFor(() => {
-      // Verificar que se llamó a la API
+      // Verificar llamada API
       expect(api.post).toHaveBeenCalledWith('/api/login', {
         email: 'paciente@test.com',
         password: '123456'
       });
       
-      // Verificar que se disparó la acción de Redux
+      // Verificar Redux
       expect(mockDispatch).toHaveBeenCalled();
       
-      // Verificar que redirigió al dashboard de paciente
+      // Verificar redirección
       expect(mockNavigate).toHaveBeenCalledWith('/dashboard/paciente');
     });
   });

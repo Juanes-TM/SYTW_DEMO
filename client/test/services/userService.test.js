@@ -1,15 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { getProfile, updateProfile, getHistory } from './userService';
+import { getProfile, updateProfile, getHistory } from '../../src/services/userService';
 
-// Mock de la API
-vi.mock('./api', () => ({
+vi.mock('../../src/services/api', () => ({
   default: {
     get: vi.fn(),
     put: vi.fn()
   }
 }));
 
-import api from './api';
+import api from '../../src/services/api';
 
 describe('userService', () => {
   beforeEach(() => {
@@ -19,6 +18,7 @@ describe('userService', () => {
   describe('getProfile', () => {
     it('deberia obtener el perfil del usuario', async () => {
       const mockUser = { nombre: 'Test User', email: 'test@test.com' };
+      // Simulamos la estructura exacta que espera tu código: res.data.user
       api.get.mockResolvedValue({ data: { user: mockUser } });
 
       const result = await getProfile();
@@ -30,6 +30,7 @@ describe('userService', () => {
     it('deberia lanzar error cuando falla', async () => {
       api.get.mockRejectedValue(new Error('Error de red'));
 
+      // getProfile hace un 'throw err', así que esperamos que el test falle
       await expect(getProfile()).rejects.toThrow('Error de red');
     });
   });
@@ -48,12 +49,14 @@ describe('userService', () => {
 
     it('deberia manejar error en actualizacion', async () => {
       const profileData = { nombre: 'Test' };
+      // Simulamos el objeto de error de Axios
       api.put.mockRejectedValue({ 
         response: { data: { msg: 'Error de validación' } } 
       });
 
       const result = await updateProfile(profileData);
 
+      // updateProfile captura el error y devuelve { ok: false, msg: ... }
       expect(result).toEqual({ ok: false, msg: 'Error de validación' });
     });
   });
@@ -72,6 +75,7 @@ describe('userService', () => {
     it('deberia retornar array vacio en caso de error', async () => {
       api.get.mockRejectedValue(new Error('Error'));
 
+      // getHistory captura el error y devuelve []
       const result = await getHistory();
 
       expect(result).toEqual([]);
