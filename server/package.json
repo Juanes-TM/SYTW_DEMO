@@ -5,8 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "jest test/ --runInBand --silent --passWithNoTests --forceExit --detectOpenHandles --coverage=false",
-    "test:e2e": "jest t-e2e/scripts-js/ --runInBand --passWithNoTests --forceExit --detectOpenHandles --coverage=false",
-    "test:ci": "npm run test && npm run test:e2e",
+    "test:e2e": "jest t-e2e/scripts-js/ --runInBand --passWithNoTests --forceExit --detectOpenHandles",
     "start": "node server.js"
   },
   "keywords": [],
