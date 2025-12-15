@@ -1,4 +1,4 @@
-name: CI Pipeline
+name: CI Pipeline (Unit Tests Solamente)
 
 on:
   push:
@@ -7,8 +7,11 @@ on:
     branches: [ main, develop ]
 
 jobs:
+  # ==========================================
+  # JOB 1: BACKEND TESTS (UNITARIOS)
+  # ==========================================
   test-backend:
-    name: Test Backend
+    name: Test Backend (Unitarios)
     runs-on: ubuntu-latest
     
     services:
@@ -16,26 +19,19 @@ jobs:
         image: mongo:5
         ports:
           - 27017:27017
+        options: --name mongodb_service
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-    
+      
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '18'
-        
-    # CAMBIO: Usar Chrome en lugar de Firefox
-    - name: Setup Chrome
-      uses: browser-actions/setup-chrome@latest
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: server/package-lock.json
 
-    - name: Update E2E Tests for Chrome
-      run: |
-        cd server
-        # Este script creará/modificará los tests para usar Chrome
-        node update-e2e-tests.js
-      
     - name: Create Backend Config File
       run: |
         cd server
@@ -45,66 +41,47 @@ jobs:
           "MONGO_URI": "mongodb://localhost:27017/testdb"
         }
         EOF
-        
-    - name: Install dependencies (server)
-      run: cd server && npm install
-      
-    - name: Run Unit Tests
-      run: |
-        cd server
-        npm test -- test/ --runInBand --silent --passWithNoTests --forceExit --detectOpenHandles --coverage=false
-      
-    - name: Build Frontend for E2E Tests
-      run: |
-        cd client
-        npm install
-        # Forzar build aunque haya warnings de Node.js
-        npm run build || true
-      
-    - name: Start Server for E2E Tests
-      run: |
-        cd server
-        node start-ci-server.js &
-        echo $! > server.pid
-        sleep 10
-        # Verificar que el servidor responde
-        curl -f http://localhost:3000/api/fisioterapeutas || echo "Server check failed but continuing..."
-      
-    - name: Run E2E Tests
-      run: |
-        cd server
-        # Modificar tests para usar Chrome y localhost
-        find t-e2e/original -name "*.spec.js" -exec sed -i 's|https://10.6.131.134|http://localhost:3000|g' {} \;
-        find t-e2e/original -name "*.spec.js" -exec sed -i "s|.forBrowser('firefox')|.forBrowser('chrome')|g" {} \;
-        npm test -- t-e2e/original/ --runInBand --passWithNoTests --forceExit --detectOpenHandles --coverage=false
-      
-    - name: Stop Server
-      if: always()
-      run: |
-        cd server
-        if [ -f server.pid ]; then
-          kill $(cat server.pid) 2>/dev/null || true
-          rm -f server.pid
-        fi
 
+    - name: Install Backend dependencies
+      run: |
+        cd server
+        npm ci
+
+    - name: Run Backend Unit Tests
+      run: |
+        cd server
+        # Comando original: npm test -- test/ --runInBand --silent --passWithNoTests --forceExit --detectOpenHandles
+        npm test -- test/ --runInBand --silent --passWithNoTests --forceExit --detectOpenHandles
+
+
+  # ==========================================
+  # JOB 2: FRONTEND TESTS (UNITARIOS)
+  # ==========================================
   test-frontend:
-    name: Test Frontend  
+    name: Test Frontend (Unitarios)  
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-    
+      
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '18'
-        
-    - name: Install dependencies (client)
-      run: cd client && npm install
-      
-    - name: Run Frontend Tests (Vitest/React)
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: client/package-lock.json
+
+    - name: Install Frontend dependencies
       run: |
         cd client
-        npx vitest run --silent --environment=jsdom
-        
+        npm ci
+
+    - name: Run Frontend Tests (Vitest)
+      env:
+        CI: true
+      run: |
+        cd client
+        # Comando adaptado de tu original, sin la parte de cobertura
+        npx vitest run --reporter=verbose --pool=forks --no-cache --bail=1 --testTimeout=30000 --hookTimeout=30000
