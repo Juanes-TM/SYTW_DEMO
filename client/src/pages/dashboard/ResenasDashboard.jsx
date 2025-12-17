@@ -7,7 +7,6 @@ export default function ResenasDashboard() {
   const [cargando, setCargando] = useState(true);
   const [paginaCarrusel, setPaginaCarrusel] = useState({});
 
-  // 📌 MAPA DE FOTOS REALES DE FISIOS
   const fotoFisio = {
     Laura: "/img/fisio1_avatar_crop.png",
     Diego: "/img/fisio5_avatar_crop.png",
@@ -15,7 +14,9 @@ export default function ResenasDashboard() {
     Maria: "/img/fisio4_avatar_crop.png",
     Javier: "/img/fisio2_avatar_crop.png",
     Sara: "/img/fisio6_avatar_crop.png",
+    fisio2: "/img/fisio2_avatar_crop.png",
     Fisio9: "/img/fisio6_avatar_crop.png"
+    
   };
 
   useEffect(() => {
@@ -34,7 +35,7 @@ export default function ResenasDashboard() {
 
   if (cargando) return <p className="p-4">Cargando reseñas...</p>;
 
-  // ⭐ Render de estrellas
+  // Render de estrellas
   const renderStars = (value) => {
     const n = Math.round(Number(value) || 0);
     return (
@@ -54,7 +55,6 @@ export default function ResenasDashboard() {
     );
   };
 
-  // TAMAÑO DEL SLIDE DEL CARRUSEL
   const WIDTH = 340;
 
   return (

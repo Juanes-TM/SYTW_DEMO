@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { getProfile } from "../services/userService";
 import { useNavigate } from "react-router-dom";
-// Importar iconos para los campos del perfil
 import { FaEnvelope, FaPhone, FaBriefcase, FaArrowLeft, FaEdit } from 'react-icons/fa';
 
 export default function ProfilePage() {
@@ -64,7 +63,6 @@ export default function ProfilePage() {
         
         {/* Encabezado de la Tarjeta */}
         <div className="p-8 bg-teal-600 text-white">
-          {/* CAMBIO AQUI: font-bold para negrita */}
           <h2 className="text-3xl font-bold mb-1">
             {user.nombre} {user.apellido}
           </h2>
@@ -115,7 +113,6 @@ export default function ProfilePage() {
   );
 }
 
-// Sub-componente para detalles
 function DetailItem({ icon, label, value }) {
   return (
     <div className="flex items-start space-x-4 border-l-4 border-teal-300 pl-4 py-1">

@@ -110,10 +110,15 @@ export default function ReservarCitaPage() {
 
     cargarDatosFusionados();
   }, [token]);
+<<<<<<< HEAD
 
   // =========================================================
   // 2. LÓGICA DE FILTRADO EN TIEMPO REAL
   // =========================================================
+=======
+  
+  // 2. Guardar el fisioId seleccionado en localStorage
+>>>>>>> DevFinal
   useEffect(() => {
     let resultado = fisios;
 
@@ -499,7 +504,12 @@ export default function ReservarCitaPage() {
         onConfirm={handleConfirmarCancelacion} 
         loading={cancelling} 
       />
+<<<<<<< HEAD
        
+=======
+      
+      {/* MODAL DE CONFLICTO */}
+>>>>>>> DevFinal
       <ConflictoModal
         isOpen={modalConflictoOpen}
         onClose={() => setModalConflictoOpen(false)}

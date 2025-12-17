@@ -99,7 +99,6 @@ const TarjetaCita = ({ cita, formatHora, mostrarFecha, onCancel }) => {
       year: "numeric",
     });
     
-  // Fecha corta para cabecera (Ej: "Lun, 12 Oct")
   const fechaCabecera = new Date(cita.startAt).toLocaleDateString("es-ES", { 
       weekday: 'short', day: 'numeric', month: 'short' 
   });
@@ -108,7 +107,7 @@ const TarjetaCita = ({ cita, formatHora, mostrarFecha, onCancel }) => {
     <div className="bg-white p-4 rounded-xl shadow border border-gray-200 transition hover:shadow-lg">
       <div className="flex justify-between items-start">
         <div>
-          {/* Mostrar fecha solo si se pide (cuando no es filtro "hoy") */}
+          {/* Mostrar fecha solo si se pide */}
           {mostrarFecha && (
             <p className="text-xs font-bold text-teal-600 mb-0.5 uppercase tracking-wide">
               {fechaCabecera}
@@ -160,7 +159,7 @@ const TarjetaCita = ({ cita, formatHora, mostrarFecha, onCancel }) => {
             </p>
           )}
 
-          {/* Botón de Cancelar (Solo si es pendiente/confirmada y existe la función onCancel) */}
+          {/* Botón de Cancelar */}
           {onCancel && (cita.estado === 'pendiente' || cita.estado === 'confirmada') && (
             <div className="mt-4 flex justify-end">
               <button
@@ -305,7 +304,7 @@ function ResumenCard({ title, value, icon }) {
 }
 
 // ======================
-// 6. COMPONENTE PRINCIPAL (DASHBOARD)
+// 6. COMPONENTE PRINCIPAL
 // ======================
 export default function FisioDashboard() {
   const { citas, loading } = useCitas();
@@ -341,7 +340,6 @@ export default function FisioDashboard() {
 
     try {
         const token = localStorage.getItem("token");
-        // NOTA: Ajusta la URL si tu backend corre en otro puerto
         const response = await fetch(
           `/api/citas/${citaSeleccionada._id}/estado`,
           {
@@ -358,7 +356,6 @@ export default function FisioDashboard() {
 
         if (!response.ok) throw new Error('Error al cancelar la cita');
 
-        // opción mínima y segura
         setTimeout(() => {
           window.location.reload();
         }, 300);
@@ -390,7 +387,7 @@ export default function FisioDashboard() {
         return f - hoy <= 7 * 24 * 60 * 60 * 1000 && f >= hoy;
       });
     }
-    return lista; // "todas"
+    return lista;
   };
 
   // --- PROCESAMIENTO LISTAS ---
@@ -566,7 +563,6 @@ export default function FisioDashboard() {
                 cita={c} 
                 formatHora={formatHora} 
                 mostrarFecha={filtroCanceladas !== "hoy"}
-                // No pasamos onCancel aquí porque ya están canceladas
               />
             ))
           )}

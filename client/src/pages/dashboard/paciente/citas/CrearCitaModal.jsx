@@ -29,7 +29,6 @@ export default function CrearCitaModal({ visible, onClose, slot, onCreated }) {
 
       const startAt = buildStartAt();
 
-      // AHORA CORRECTO: backend espera fisioterapeutaId
       const body = {
         fisioterapeutaId,
         startAt,
@@ -40,7 +39,7 @@ export default function CrearCitaModal({ visible, onClose, slot, onCreated }) {
 
       const res = await api.post("/api/citas", body);
 
-      onCreated(res.data.cita); // Backend devuelve { msg, cita }
+      onCreated(res.data.cita);
       onClose();
 
     } catch (err) {

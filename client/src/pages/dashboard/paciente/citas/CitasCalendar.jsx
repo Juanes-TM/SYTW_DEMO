@@ -5,7 +5,7 @@ import { useFisioterapeutas } from "../../../../hooks/useFisioterapeutas";
 import EditarCitaModal from "./EditarCitaModal"; 
 import CitaModal from "./CitaModal";
 import ListaCitasDiaModal from "./ListaCitasDiaModal"; 
-import CancelarModal from "./CancelarModal"; // NECESITAS ESTE MODAL O USAR EL DE RESERVA
+import CancelarModal from "./CancelarModal";
 
 // ----------------------
 // Helpers
@@ -39,7 +39,6 @@ export default function CitasCalendar({ modo }) {
   const [modalType, setModalType] = useState(null); // 'DETALLE' | 'EDITAR'
   const [cancelling, setCancelling] = useState(false);
   
-  // Nuevo estado para la lista de citas del día
   const [citasDelDia, setCitasDelDia] = useState([]);
   const [listaDiaModalOpen, setListaDiaModalOpen] = useState(false);
   
@@ -106,7 +105,7 @@ export default function CitasCalendar({ modo }) {
     const nueva = new Date(fechaActual);
     nueva.setMonth(nueva.getMonth() + dir);
     
-    // Validar no ir antes del mes de registro (Límite inferior)
+    // Validar no ir antes del mes de registro
     const limiteInferior = new Date(fechaRegistro.getFullYear(), fechaRegistro.getMonth(), 1);
     if (dir < 0 && nueva < limiteInferior) {
         return; 
@@ -139,15 +138,14 @@ export default function CitasCalendar({ modo }) {
     const refrescarCitas = () => {
       setRefreshFlag(prev => prev + 1);
     };
-  // 1. Inicia el flujo de confirmación de cancelación (Abre el modal secundario)
+  // 1. Inicia el flujo de confirmación de cancelación
   const handleRequestCancel = (citaId) => {
-    // Primero cerramos el modal de detalle para que no esté debajo
     setModalType(null); 
     setCitaIdToCancel(citaId);
     setModalConfirmCancelOpen(true);
   };
   
-  // 2. Ejecuta la cancelación real (Llamado desde el Modal Cancelar)
+  // 2. Ejecuta la cancelación real
   const handleConfirmarCancelacion = async () => {
     if (!citaIdToCancel) return;
     
@@ -295,7 +293,7 @@ export default function CitasCalendar({ modo }) {
         />
       )}
 
-      {/* NUEVO MODAL: Listado de Citas del Día */}
+      {/* Listado de Citas del Día */}
       {listaDiaModalOpen && (
         <ListaCitasDiaModal
             isOpen={listaDiaModalOpen}
@@ -305,7 +303,7 @@ export default function CitasCalendar({ modo }) {
         />
       )}
       
-      {/* MODAL DE CONFIRMACIÓN DE CANCELACIÓN (IDÉNTICO A RESERVA) */}
+      {/* MODAL DE CONFIRMACIÓN DE CANCELACIÓN */}
       {modalConfirmCancelOpen && (
         <CancelarModal 
           isOpen={true} 

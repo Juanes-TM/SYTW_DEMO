@@ -59,7 +59,7 @@ export default function ValoracionPage() {
           Tu opinión ayuda a mejorar la calidad del servicio
         </p>
 
-        {/* ⭐ PUNTUACIÓN */}
+        {/* PUNTUACIÓN */}
         <div className="mb-6">
           <p className="text-sm font-medium text-gray-700 mb-2">
             Puntuación
@@ -85,7 +85,7 @@ export default function ValoracionPage() {
           </div>
         </div>
 
-        {/* ✍️ COMENTARIO */}
+        {/* COMENTARIO */}
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Comentario (opcional)

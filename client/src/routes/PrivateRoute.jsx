@@ -10,12 +10,12 @@ import { Navigate } from "react-router-dom";
 function PrivateRoute({ children, allowedRoles }) {
   const { user } = useSelector((state) => state.user);
 
-  //  No autenticado → al login
+  //  Si no autenticado entonces al login
   if (!user) {
     return <Navigate to="/login" replace />;
   }
 
-  //  Si hay restricción de roles y no cumple → al dashboard
+  //  Si hay restricción de roles y no cumple entonces al dashboard
   if (allowedRoles && !allowedRoles.includes(user.rol)) {
     return <Navigate to="/dashboard" replace />;
   }

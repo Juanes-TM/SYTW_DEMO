@@ -6,9 +6,9 @@ export default function EditarCitaModal({
   visible,
   onClose,
   cita,
-  onRequestCancel, // Usado por el paciente
+  onRequestCancel,
   cancelling,
-  onUpdated,       // Callback para refrescar el calendario tras cambios del fisio
+  onUpdated,
 }) {
   if (!visible || !cita) return null;
 
@@ -26,7 +26,7 @@ export default function EditarCitaModal({
   const [observaciones, setObservaciones] = useState(cita.observaciones || "");
   const [editando, setEditando] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [loadingAction, setLoadingAction] = useState(false); // Para acciones del Fisio
+  const [loadingAction, setLoadingAction] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -46,10 +46,9 @@ export default function EditarCitaModal({
   
   const puedeEditarTexto = isPaciente && puedeCancelarPaciente;
 
-  // FISIO: Puede gestionar siempre que no esté cancelada
+  // FISIO:
   const puedeGestionarFisio = isFisio && cita.estado !== "cancelada";
 
-  // COLORES
   let headerColor = "bg-indigo-600";
   let badgeColor = "bg-indigo-100 text-indigo-800";
 
@@ -63,7 +62,6 @@ export default function EditarCitaModal({
 
   // --- FUNCIONES ---
 
-  // Acción del Paciente
   const handleCancelarPaciente = () => {
     onRequestCancel(cita._id);
   };
@@ -92,7 +90,7 @@ export default function EditarCitaModal({
     }
   };
 
-  // Acción del Fisio (Directa)
+  // Acción del Fisio
   const cambiarEstado = async (nuevoEstado) => {
     const msg = nuevoEstado === 'cancelada' 
       ? "¿Seguro que quieres CANCELAR esta cita? El paciente será notificado."
@@ -105,7 +103,7 @@ export default function EditarCitaModal({
       const res = await api.put(`/api/citas/${cita._id}/estado`, { estado: nuevoEstado });
       alert(`Cita actualizada a: ${nuevoEstado}`);
       
-      if (onUpdated) onUpdated(res.data.cita); // Refresca calendario
+      if (onUpdated) onUpdated(res.data.cita);
       onClose();
     } catch (error) {
       console.error(error);
@@ -207,7 +205,7 @@ export default function EditarCitaModal({
              </div>
           )}
 
-          {/* === BOTONES PACIENTE (VALORAR) === */}
+          {/* === BOTONES PACIENTE === */}
           {puedeValorar && (
             <div className="mt-4 pt-4 border-t border-gray-100">
               <button onClick={irAValorar} className="w-full flex items-center justify-center gap-2 bg-amber-400 hover:bg-amber-500 text-white font-bold py-2 px-4 rounded-xl shadow-md">
@@ -223,7 +221,7 @@ export default function EditarCitaModal({
             Cerrar
           </button>
 
-          {/* Botón Cancelar del Paciente (Solicitud) */}
+          {/* Botón Cancelar del Paciente */}
           {puedeCancelarPaciente && (
             <button
               onClick={handleCancelarPaciente}

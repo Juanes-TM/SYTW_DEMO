@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { useDisponibilidad } from "../../../../hooks/useDisponibilidad";
 import EditarCitaModal from "../../../../pages/dashboard/paciente/citas/EditarCitaModal";
-// Importamos los iconos necesarios
 import { CalendarCheck, Plus, Trash2, Save, Loader2, AlertTriangle, CheckCircle } from "lucide-react";
 
 
@@ -28,7 +27,7 @@ export default function DisponibilidadPage() {
   const [errorGuardado, setErrorGuardado] = useState(null);
   const [mensajeExito, setMensajeExito] = useState(null);
 
-  // --- ESTADOS PARA GESTIÓN DE CITAS (MODAL) ---
+  // --- ESTADOS PARA GESTIÓN DE CITAS ---
   const [citaSeleccionada, setCitaSeleccionada] = useState(null);
   const [modalAbierto, setModalAbierto] = useState(false);
 
@@ -111,10 +110,8 @@ export default function DisponibilidadPage() {
     }
   };
 
-  // Función placeholder por si integras un calendario de citas aquí
   const handleCitaUpdate = () => {
     console.log("Cita actualizada, aquí recargarías tu calendario de citas.");
-    // Si tuvieras una función fetchCitas(), la llamarías aquí.
   };
 
   if (loading && !semana) return <div className="p-8">Cargando disponibilidad...</div>;
@@ -234,7 +231,7 @@ export default function DisponibilidadPage() {
         </div>
       </div>
 
-      {/* --- MODAL PARA GESTIONAR CITAS (Integrado y listo) --- */}
+      {/* --- MODAL PARA GESTIONAR CITAS --- */}
       {modalAbierto && citaSeleccionada && (
         <EditarCitaModal
           visible={true}

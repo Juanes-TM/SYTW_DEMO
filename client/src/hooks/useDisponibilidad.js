@@ -8,9 +8,7 @@ const DIAS_SEMANA_ORDENADOS = [
 export function useDisponibilidad(fisioId) {
   const [semana, setSemana] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  // NOTA: El token se leerá dentro de las funciones asíncronas para obtener el valor más reciente
-
+  
   // ────────────────────────────────
   // CARGAR SEMANA
   // ────────────────────────────────

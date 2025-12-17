@@ -3,7 +3,6 @@
 const express = require('express');
 const router = express.Router();
 const Valoracion = require('../models/valoraciones');
-// Asegúrate de que el nombre del fichero sea correcto (mayúsculas/minúsculas)
 const Cita = require('../models/cita'); 
 const User = require('../models/user');
 const auth = require('../middleware/auth');
@@ -22,7 +21,6 @@ router.post('/crear', auth, async (req, res) => {
 
     // 2. Verificar rol del usuario
     if (req.userRole !== 'cliente' && req.userRole !== 'paciente') { 
-      // Nota: Acepto 'cliente' o 'paciente' por si acaso usas distintos nombres de rol
       return res.status(403).json({ msg: 'Solo los pacientes pueden dejar valoraciones' });
     }
 
@@ -31,8 +29,6 @@ router.post('/crear', auth, async (req, res) => {
     if (!fisio) return res.status(404).json({ msg: 'Fisioterapeuta no encontrado' });
 
     // 4. Comprobar CITA COMPLETADA
-    // ATENCIÓN: Aquí verificamos si en tu modelo de Cita el campo se llama 'fisio' o 'fisioterapeuta'.
-    // Usaremos un $or para que funcione con ambos casos, o revísalo en tu modelo server/models/cita.js
     const tuvoCita = await Cita.findOne({
       paciente: req.userId,
       $or: [{ fisio: fisioId }, { fisioterapeuta: fisioId }], 
@@ -45,7 +41,7 @@ router.post('/crear', auth, async (req, res) => {
       });
     }
 
-    // 5. Verificar si ya existe una valoración para esta cita/fisio (Opcional, para evitar duplicados)
+    // 5. Verificar si ya existe una valoración para esta cita/fisio
     const existeValoracion = await Valoracion.findOne({ paciente: req.userId, fisio: fisioId });
     if (existeValoracion) {
         return res.status(400).json({ msg: 'Ya has valorado a este fisioterapeuta anteriormente.' });
@@ -127,7 +123,7 @@ router.get('/todas', async (req, res) => {
 
     valoraciones.forEach(v => {
       const id = v.fisio?._id;
-      if (!id) return; // prevención por si falta populate
+      if (!id) return;
 
       if (!agrupadas[id]) {
         agrupadas[id] = {

@@ -143,7 +143,7 @@ export default function FisioterapeutasListPage() {
             <p className="text-teal-600 font-medium">{f.especialidad}</p>
             <p className="text-gray-500 text-sm mb-2">{f.colegiado}</p>
 
-            {/* NUEVO RESUMEN MÁS LARGO */}
+            {/* RESUMEN LARGO */}
             <p className="text-gray-600 text-sm leading-relaxed mb-4">
               {f.resumen}
             </p>

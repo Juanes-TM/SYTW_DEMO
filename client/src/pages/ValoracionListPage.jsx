@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { obtenerValoracionesFisio } from '../services/valoracionesService';
-import { useParams, useNavigate } from 'react-router-dom'; // <--- Importamos useNavigate
+import { useParams, useNavigate } from 'react-router-dom';
 
 export default function ValoracionesList() {
   const [valoraciones, setValoraciones] = useState([]);
-  const [loading, setLoading] = useState(true); // Añadimos estado de carga para mejor UX
+  const [loading, setLoading] = useState(true);
   const params = useParams();
-  const navigate = useNavigate(); // <--- Inicializamos el hook
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function cargar() {

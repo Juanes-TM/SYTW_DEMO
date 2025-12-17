@@ -9,7 +9,6 @@ export default function DashboardLayout() {
   const saved = JSON.parse(localStorage.getItem("fisioUser") || "{}");
   const currentUser = saved.user || {};
   
-  // No necesitamos 'token' aquí para renderizar, pero si lo usas para otras cosas está bien.
   // const token = saved.token || localStorage.getItem("token");
 
   const handleLogout = () => {
@@ -21,19 +20,18 @@ export default function DashboardLayout() {
 
   return (
     <div className="min-h-screen flex bg-gray-50">
-      {/* === SIDEBAR (Barra Lateral Izquierda) === */}
+      {/* === SIDEBAR === */}
       <aside 
         className="w-64 text-white flex flex-col shadow-lg fixed h-full top-0 left-0 z-20"
         style={{
           backgroundImage: 'url(/img/fisiotrack-bg-waves-last.png)', 
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          backgroundColor: '#0f766e' // Color de fondo por si falla la imagen (Teal-700)
+          backgroundColor: '#0f766e'
         }}
       >
         {/* Logo */}
         <div className="flex justify-center p-4 text-2xl font-semibold border-b border-teal-500/30 backdrop-blur-sm">
-          {/* Si no tienes la imagen, pon un texto provisional o asegúrate de que la ruta sea correcta */}
           <img src="/img/fisiotrack-logo-white.png" alt="FisioTrack" className="w-28 mb-2" />
         </div>
 
@@ -163,7 +161,7 @@ export default function DashboardLayout() {
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
         
         {/* 1. HEADER SUPERIOR */}
-        <header className="bg-white h-16 shadow-sm flex items-center justify-between px-6 relative z-[100]">
+        <header className="bg-white h-16 shadow-sm flex items-center justify-between px-6 relative">
           <h2 className="text-xl font-bold text-gray-700 capitalize">
              {/* Título dinámico simple */}
              Panel de {currentUser.rol}

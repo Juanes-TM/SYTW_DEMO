@@ -6,7 +6,7 @@ const DisponibilidadSemanal = require("../models/disponibilidadSemanal");
 const DisponibilidadDia = require("../models/disponibilidadDia");
 const Cita = require("../models/cita");
 const User = require("../models/user");
-const Bloqueo = require("../models/bloqueo"); // <--- NUEVO IMPORT
+const Bloqueo = require("../models/bloqueo");
 const registrarEvento = require("../utils/registrarEvento");
 
 // ==================== HELPERS ====================
@@ -310,7 +310,7 @@ router.get("/intervalos", auth, async (req, res) => {
     fechaFinDia.setHours(23, 59, 59, 999);
 
     // ----------------------------------------------------
-    // 1. VERIFICAR BLOQUEOS (VACACIONES/AUSENCIAS) - NUEVO
+    // 1. VERIFICAR BLOQUEOS
     // ----------------------------------------------------
     const bloqueo = await Bloqueo.findOne({
       fisioterapeuta: fisioId,
@@ -323,7 +323,7 @@ router.get("/intervalos", auth, async (req, res) => {
       return res.status(200).json({
         fisio: fisioId,
         fecha: fechaNorm,
-        intervalosLibres: [], // Lista vacía
+        intervalosLibres: [],
         bloqueado: true,
         motivoBloqueo: bloqueo.motivo
       });

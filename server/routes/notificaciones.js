@@ -3,12 +3,12 @@ const router = express.Router();
 const auth = require('../middleware/auth');
 const Notificacion = require('../models/notificacion');
 
-// GET: Obtener mis notificaciones no leídas (o todas)
+// GET: Obtener notificaciones no leídas
 router.get('/', auth, async (req, res) => {
   try {
     const notificaciones = await Notificacion.find({ usuario: req.userId })
-      .sort({ fecha: -1 }) // Las más nuevas primero
-      .limit(10); // Traemos las últimas 10
+      .sort({ fecha: -1 })
+      .limit(10);
     
     res.json(notificaciones);
   } catch (err) {

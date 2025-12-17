@@ -8,7 +8,6 @@ const DisponibilidadDia = require("../models/disponibilidadDia");
 const Cita = require("../models/cita");
 const User = require("../models/user");
 
-// Helpers
 const diasSemana = [
   "domingo",
   "lunes",
@@ -52,7 +51,7 @@ function validarIntervalos(horas) {
   return true;
 }
 
-// Middleware: solo fisioterapeuta o admin
+// Middleware solo fisioterapeuta o admin
 async function soloFisioOAdmin(req, res, next) {
   try {
     const user = await User.findById(req.userId).lean();
