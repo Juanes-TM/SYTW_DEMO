@@ -17,7 +17,7 @@ export default function NotificacionesBell() {
 
   useEffect(() => {
     cargarNotificaciones();
-    // Opcional: Polling cada 60 segundos para ver si hay nuevas sin recargar página
+    // Polling cada 60 segundos para ver si hay nuevas sin recargar página
     const intervalo = setInterval(cargarNotificaciones, 60000); 
     return () => clearInterval(intervalo);
   }, []);

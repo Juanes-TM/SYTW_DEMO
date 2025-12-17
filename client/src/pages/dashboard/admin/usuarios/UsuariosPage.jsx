@@ -16,7 +16,7 @@ import {
     Mail, 
     User, 
     Loader2,
-    RotateCw // Icono para el cambio de rol en el modal de confirmación
+    RotateCw
 } from "lucide-react";
 
 
@@ -40,7 +40,7 @@ export default function UsuariosPage() {
     const [mensaje, setMensaje] = useState("");
     const [usuarioEditando, setUsuarioEditando] = useState(null);
     
-    // ESTADO CLAVE: Datos del usuario al abrir el modal (para comparación)
+    // ESTADO : Datos del usuario al abrir el modal
     const [datosOriginales, setDatosOriginales] = useState({});
 
     const [formData, setFormData] = useState({});
@@ -50,11 +50,10 @@ export default function UsuariosPage() {
     
     // NUEVOS ESTADOS PARA EL MODAL DE CONFIRMACIÓN DE ROL
     const [confirmModalData, setConfirmModalData] = useState(null); 
-    // { id: '...', nuevoRol: '...', nombre: '...' }
 
     const token = user?.token || localStorage.getItem('token'); 
 
-    // --- Lógica funcional (SIN MODIFICACIONES) ---
+    // --- Lógica funcional  ---
 
     const fetchUsuarios = async () => {
         if (!token) return;
@@ -102,7 +101,6 @@ export default function UsuariosPage() {
             : bValue.localeCompare(aValue);
     });
     
-    // FUNCIÓN CENTRAL: Solo realiza la acción. Se llama desde el modal.
     const ejecutarCambioRol = async (id, nuevoRol) => {
         setConfirmModalData(null); // Cerrar el modal inmediatamente al ejecutar la acción
         try {
@@ -121,7 +119,6 @@ export default function UsuariosPage() {
         }
     };
     
-    // FUNCIÓN MODIFICADA: Ahora abre el modal integrado en lugar del confirm del navegador.
     const cambiarRol = (id, nuevoRol, nombre) => {
         setConfirmModalData({ id, nuevoRol, nombre });
     };
@@ -262,7 +259,7 @@ export default function UsuariosPage() {
             <div className="bg-white rounded-2xl shadow-xl overflow-x-auto border border-gray-100">
                 <table className="min-w-full text-sm text-gray-700">
                     
-                    {/* Encabezado de la Tabla (Thead) */}
+                    {/* Encabezado de la Tabla */}
                     <thead className="bg-gray-100 text-xs uppercase text-gray-600 border-b border-gray-200">
                         <tr>
                             {/* Nombres de las Columnas */}
@@ -281,7 +278,7 @@ export default function UsuariosPage() {
                         </tr>
                     </thead>
 
-                    {/* Cuerpo de la Tabla (Tbody) */}
+                    {/* Cuerpo de la Tabla */}
                     <tbody>
                         {usuariosOrdenados.map((u, index) => (
                             <tr key={u._id} className={`hover:bg-teal-50/50 transition-colors ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
@@ -291,7 +288,7 @@ export default function UsuariosPage() {
                                 <td className="px-6 py-3 text-gray-500">{u.email}</td>
                                 <td className="px-6 py-3 text-gray-500">{u.telephone}</td>
                                 
-                                {/* Columna: Rol (con Badges) */}
+                                {/* Columna: Rol */}
                                 <td className="px-6 py-3">
                                     <span
                                         className={`px-3 py-1 rounded-full text-white text-xs font-bold uppercase shadow-md ${
@@ -319,7 +316,7 @@ export default function UsuariosPage() {
                                     </div>
                                 </td>
                                 
-                                {/* Columna: Acciones (con botones de iconos) */}
+                                {/* Columna: Acciones */}
                                 <td className="px-6 py-3 space-x-2 whitespace-nowrap">
                                     
                                     {/* Selector de Rol. Llama a 'cambiarRol' que ahora abre el modal integrado */}
@@ -342,7 +339,7 @@ export default function UsuariosPage() {
                                         <Edit size={16} />
                                     </button>
                                     
-                                    {/* Botón Eliminar (Mantiene window.confirm) */}
+                                    {/* Botón Eliminar  */}
                                     <button
                                         onClick={() => eliminarUsuario(u._id)}
                                         title="Eliminar usuario"
@@ -363,7 +360,7 @@ export default function UsuariosPage() {
                 )}
             </div>
 
-            {/* Modal de Edición (Mantiene la estética mejorada) */}
+            {/* Modal de Edición */}
             {modalVisible && usuarioEditando && (
                 <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
                     <div
@@ -416,7 +413,7 @@ export default function UsuariosPage() {
                                 </div>
                             ))}
                             
-                            {/* CAMPO: Especialidad (Solo para fisioterapeutas) */}
+                            {/* CAMPO: Especialidad */}
                             {usuarioEditando.rol === "fisioterapeuta" && (
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Especialidad</label>
@@ -466,7 +463,7 @@ export default function UsuariosPage() {
                 </div>
             )}
 
-            {/* 🚨 NUEVO: Modal de Confirmación de Cambio de Rol 🚨 */}
+            {/* Modal de Confirmación de Cambio de Rol */}
             {confirmModalData && (
                 <div className="fixed inset-0 flex items-center justify-center z-[100] p-4"> 
                     <div

@@ -15,7 +15,6 @@ export default function PacienteDashboard() {
 
     async function fetchData() {
       try {
-        // Obtenemos todas las citas del paciente
         const res = await api.get("/api/citas");
         const citas = res.data;
 
@@ -29,7 +28,7 @@ export default function PacienteDashboard() {
           pendientes
         });
 
-        // 2. Buscar la PRÓXIMA cita futura
+        // 2. Buscar la siguiente cita futura
         const ahora = new Date();
         const futuras = citas
           .filter(c => (c.estado === 'pendiente' || c.estado === 'confirmada') && new Date(c.startAt) > ahora)
@@ -56,9 +55,7 @@ export default function PacienteDashboard() {
   return (
     <div className="max-w-6xl mx-auto space-y-8">
       
-      {/* --- HERO SECTION --- */}
       <div className="bg-gradient-to-r from-teal-600 to-teal-800 rounded-3xl p-8 text-white shadow-xl flex flex-col md:flex-row justify-between items-center relative overflow-hidden z-0">
-        {/* Decoración de fondo */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full -mr-16 -mt-16 blur-3xl"></div>
         
         <div className="relative">
@@ -83,7 +80,7 @@ export default function PacienteDashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        {/* --- COLUMNA IZQUIERDA (2/3): Próxima Cita y Accesos --- */}
+        {/* --- COLUMNA Próxima Cita y Accesos --- */}
         <div className="lg:col-span-2 space-y-8">
           
           {/* TARJETA PRÓXIMA CITA */}
@@ -160,7 +157,7 @@ export default function PacienteDashboard() {
 
         </div>
 
-        {/* --- COLUMNA DERECHA (1/3): Resumen --- */}
+        {/* --- COLUMNA Resumen --- */}
         <div className="space-y-8">
           
           {/* TARJETA RESUMEN */}

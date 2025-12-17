@@ -31,7 +31,6 @@ function LoginPage() {
       const res = await api.post("/api/login", { email, password });
       const { user, token } = res.data;
 
-      // NORMALIZACIÓN UNIFICADA
       const userPayload = {
         user: {
           _id: user._id,
@@ -70,7 +69,6 @@ function LoginPage() {
       }}
     >
       <div className="bg-white p-18 rounded-2xl shadow-2xl w-96 text-center relative">
-        {/* Logo grande encima del formulario */}
         <div className="absolute top-5 left-0 right-0 text-center mx-auto mb-6">
           <img
             src="/img/fisiotrack-logo.png"

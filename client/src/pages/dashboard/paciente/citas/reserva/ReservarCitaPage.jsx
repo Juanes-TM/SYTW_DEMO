@@ -75,7 +75,7 @@ export default function ReservarCitaPage() {
     cargarFisios();
   }, [token]);
   
-  // 2. PERSISTENCIA: Guardar el fisioId seleccionado en localStorage
+  // 2. Guardar el fisioId seleccionado en localStorage
   useEffect(() => {
       localStorage.setItem('lastFisioId', fisioId);
   }, [fisioId]);
@@ -432,7 +432,7 @@ export default function ReservarCitaPage() {
         loading={cancelling} 
       />
       
-      {/* NUEVO MODAL DE CONFLICTO */}
+      {/* MODAL DE CONFLICTO */}
       <ConflictoModal
         isOpen={modalConflictoOpen}
         onClose={() => setModalConflictoOpen(false)}

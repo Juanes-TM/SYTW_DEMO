@@ -10,12 +10,10 @@ function CitasIndex() {
 
   const currentUser = reduxUser.user;
 
-  // CAMBIO: Si es paciente, usa la vista de calendario mensual/histórico
   if (currentUser.rol === "cliente") {
     return <CitasCalendar modo="paciente" />; 
   }
 
-  // Si es fisio o admin, usa el calendario antiguo (semanal/tablas)
   if (currentUser.rol === "fisioterapeuta" || currentUser.rol === "admin") {
     return <CitasCalendar modo={currentUser.rol} />; 
   }

@@ -63,7 +63,7 @@ export default function RegisterPage() {
       const res = await api.post("/api/register", formData);
       alert(res.data.msg || "Usuario registrado correctamente");
 
-      // Tras el registro, redirige al login
+      // Despues del registro, redirige al login
       navigate("/login");
     } catch (err) {
       console.error("Error al registrar usuario:", err);

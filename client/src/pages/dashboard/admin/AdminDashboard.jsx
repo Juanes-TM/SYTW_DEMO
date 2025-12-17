@@ -25,7 +25,6 @@ export default function AdminDashboard() {
       setLoading(true);
       setMensaje("");
 
-      // El token ahora se inyecta automáticamente por api.js
       const res = await api.get("/api/admin/stats");
 
       setStats(res.data);
@@ -39,7 +38,7 @@ export default function AdminDashboard() {
     }
   };
 
-  const fetchEventos = async () => {                        // NUEVO
+  const fetchEventos = async () => {
     try {
       setLoadingEventos(true);
       const res = await api.get("/api/admin/eventos-recientes");
@@ -115,7 +114,7 @@ export default function AdminDashboard() {
     }
   });
 
-  // Heatmap limitado a 08:00 - 20:00 y lunes-viernes
+  // Heatmap
   const horasInicio = 8;
   const horasFin = 20;
 
@@ -251,7 +250,7 @@ export default function AdminDashboard() {
       </div>
 
 
-      {/* Sección de eventos recientes */}   {/* NUEVO */}
+      {/* Sección de eventos recientes */}
       <div className="mt-12">
         <h2 className="text-2xl font-semibold text-gray-800 mb-6">Eventos recientes</h2>
 

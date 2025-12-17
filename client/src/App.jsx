@@ -74,7 +74,7 @@ function App() {
 
       </Route>
 
-      {/* Ruta protegida exclusiva para admins (puedes mantenerla si la usas) */}
+      {/* Ruta protegida exclusiva para admins */}
       <Route
         path="/dashboard/admin"
         element={

@@ -16,7 +16,6 @@ export function useIntervalos() {
     try {
       setLoading(true);
 
-      // IMPORTANTE: siempre /api/...
       const res = await api.get("/api/disponibilidad/intervalos", {
         params: { fisioId, fecha, duracion },
       });

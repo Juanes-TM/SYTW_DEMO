@@ -1,28 +1,24 @@
 import { useState, useEffect } from "react";
 import { getProfile, updateProfile } from "../services/userService";
 import { useNavigate } from "react-router-dom";
-// Importamos iconos para mejorar la interfaz de los inputs
 import { FaUser, FaPhone, FaSave, FaTimes, FaSpinner, FaEnvelope } from 'react-icons/fa';
 
 export default function EditProfilePage() {
   const [form, setForm] = useState({
     nombre: "",
     apellido: "",
-    email: "", // Nuevo campo de email en el estado
+    email: "",
     telephone: ""
   });
   
-  // Nuevo estado para manejar errores de validación
   const [errors, setErrors] = useState({});
-  
-  // Estados para manejo de UI
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState("");
   
   const navigate = useNavigate();
 
-  // Función de Validación Adaptada
   const validate = (data) => {
     const newErrors = {};
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[A-Za-z]{2,}$/;
@@ -33,7 +29,7 @@ export default function EditProfilePage() {
     }
 
     // Validar Teléfono (exactamente 9 dígitos)
-    // Usamos el mismo regex que tenías: /^[0-9]{9}$/
+    // Usamos el regex: /^[0-9]{9}$/
     if (!/^[0-9]{9}$/.test(data.telephone)) {
       newErrors.telephone = "Debe contener exactamente 9 dígitos";
     }
@@ -49,7 +45,7 @@ export default function EditProfilePage() {
         setForm({
           nombre: data.nombre || "",
           apellido: data.apellido || "",
-          email: data.email || "", // Cargar el email
+          email: data.email || "",
           telephone: data.telephone || "",
         });
       } catch (error) {
@@ -66,7 +62,6 @@ export default function EditProfilePage() {
     const { name, value } = e.target;
     setForm(prevForm => ({ ...prevForm, [name]: value }));
     
-    // Limpiar error específico y el mensaje general si el usuario edita
     if (errors[name]) {
       setErrors(prevErrors => ({ ...prevErrors, [name]: "" }));
     }
@@ -81,13 +76,12 @@ export default function EditProfilePage() {
     
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
-      // Muestra un mensaje general si hay errores, además de los específicos del campo
       setMsg("Por favor, corrige los errores en el formulario."); 
       return; 
     }
     
     setSaving(true);
-    setErrors({}); // Limpia errores si todo es válido
+    setErrors({});
     setMsg("");
 
     try {
@@ -100,7 +94,6 @@ export default function EditProfilePage() {
         return;
       }
 
-      // Éxito: Navegar de vuelta al perfil
       navigate("/profile", { replace: true });
       
     } catch (error) {
@@ -166,7 +159,7 @@ export default function EditProfilePage() {
               error={errors.apellido}
             />
 
-            {/* Input Email (Nuevo) */}
+            {/* Input Email */}
             <InputField 
               label="Email"
               name="email"
@@ -175,7 +168,7 @@ export default function EditProfilePage() {
               icon={<FaEnvelope />}
               type="email"
               placeholder="correo@ejemplo.com"
-              error={errors.email} // Mostrar error de validación
+              error={errors.email}
             />
 
             {/* Input Teléfono */}
@@ -187,7 +180,7 @@ export default function EditProfilePage() {
               icon={<FaPhone />}
               type="tel"
               placeholder="Ej: 600123456"
-              error={errors.telephone} // Mostrar error de validación
+              error={errors.telephone}
             />
           </div>
 
@@ -218,8 +211,6 @@ export default function EditProfilePage() {
   );
 }
 
-// Componente reutilizable para los Inputs con Icono
-// Modificado para recibir y mostrar el error
 function InputField({ label, name, value, onChange, icon, type = "text", placeholder, error }) {
   return (
     <div>
@@ -237,7 +228,6 @@ function InputField({ label, name, value, onChange, icon, type = "text", placeho
           onChange={onChange}
           placeholder={placeholder}
           required
-          // Clases dinámicas para resaltar el borde si hay un error
           className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 transition duration-200 placeholder-gray-400 text-gray-800 ${
             error 
               ? 'border-red-500 focus:ring-red-500' 
