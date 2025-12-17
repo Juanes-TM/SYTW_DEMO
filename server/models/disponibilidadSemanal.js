@@ -2,11 +2,11 @@
 const mongoose = require("mongoose");
 
 const DiaSchema = new mongoose.Schema({
-  nombre: { type: String, required: true }, // "lunes", "martes", etc.
+  nombre: { type: String, required: true },
   horas: [
     {
-      inicio: { type: String, required: true }, // HH:mm
-      fin: { type: String, required: true }     // HH:mm
+      inicio: { type: String, required: true },
+      fin: { type: String, required: true }
     }
   ]
 });

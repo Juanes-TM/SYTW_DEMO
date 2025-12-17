@@ -9,7 +9,6 @@ const router = express.Router();
 const EventLog = require("../models/eventLog");
 
 
-// Cargar configuración externa (ruta absoluta al backend_config.json)
 const configPath = '/home/usuario/backend_config.json';
 const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
 
@@ -60,7 +59,7 @@ router.post('/register', async (req, res) => {
       password: hashedPassword,
       telephone,
       rol: 'cliente',
-      // 'especialidad' se crea como null por defecto
+      // 'especialidad' null por defecto
     });
 
     await nuevoUsuario.save();
@@ -111,7 +110,7 @@ router.post('/login', async (req, res) => {
 
     const token = jwt.sign(
       { id: usuario._id, rol: usuario.rol },
-      config.JWT_SECRET, // Se lee del backend_config.json
+      config.JWT_SECRET,
       { expiresIn: '1h' }
     );
 
@@ -125,7 +124,7 @@ router.post('/login', async (req, res) => {
         email: usuario.email,
         telephone: usuario.telephone,
         rol: usuario.rol,
-        especialidad: usuario.especialidad // AÑADIDO: Incluimos la especialidad
+        especialidad: usuario.especialidad
       }
     });
 
@@ -141,7 +140,6 @@ const authMiddleware = require('../middleware/auth');
 
 router.get('/profile', authMiddleware, async (req, res) => {
   try {
-    // CAMBIO: Aseguramos que el perfil traiga el campo 'especialidad'
     const usuario = await User.findById(req.userId).select('-password -resetPasswordToken -resetPasswordExpires -__v');
     if (!usuario) return res.status(404).json({ msg: 'Usuario no encontrado' });
     res.status(200).json({ user: usuario });

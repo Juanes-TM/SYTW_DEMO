@@ -1,14 +1,14 @@
-console.log("🔥 CRON SERVICE CARGADO ✔");
+console.log("CRON SERVICE CARGADO ✔");
 
 const cron = require("node-cron");
 const Cita = require("../models/cita");
 const Notificacion = require("../models/notificacion");
 
 const iniciarCron = () => {
-  console.log("🚀 iniciarCron() EJECUTADO ✔");
+  console.log("iniciarCron() EJECUTADO ✔");
 
   // ============================
-  // 🔔 RECORDATORIO 24H ANTES
+  // RECORDATORIO 24H ANTES
   // ============================
   cron.schedule("0 * * * *", async () => {
     try {
@@ -37,26 +37,26 @@ const iniciarCron = () => {
       }
 
       if (citasProximas.length > 0)
-        console.log(`🔔 Recordatorios enviados: ${citasProximas.length}`);
+        console.log(`Recordatorios enviados: ${citasProximas.length}`);
     } catch (error) {
       console.error("Error en cron de recordatorios:", error);
     }
   });
 
   // ===============================
-  // CRON: MARCAR CITAS PASADAS COMO COMPLETADAS
+  // MARCAR CITAS PASADAS COMO COMPLETADAS
   // ===============================
   cron.schedule("*/10 * * * * *", async () => {
     try {
       const ahora = new Date();
-      console.log("⏳ [CRON COMPLETAR] Ejecutado. Hora actual:", ahora.toISOString());
+      console.log("[CRON COMPLETAR] Ejecutado. Hora actual:", ahora.toISOString());
 
       const citasParaCompletar = await Cita.find({
         endAt: { $lt: ahora },
         estado: { $in: ["pendiente", "confirmada"] },
       });
 
-      console.log("🔎 [CRON COMPLETAR] Citas detectadas:", citasParaCompletar.length);
+      console.log("[CRON COMPLETAR] Citas detectadas:", citasParaCompletar.length);
 
       if (citasParaCompletar.length > 0) {
         console.log(
@@ -69,7 +69,7 @@ const iniciarCron = () => {
         await cita.save();
       }
     } catch (error) {
-      console.error("❌ Error en cron de completar citas:", error);
+      console.error("Error en cron de completar citas:", error);
     }
   });
 };

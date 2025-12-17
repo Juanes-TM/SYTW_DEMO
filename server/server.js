@@ -50,7 +50,7 @@ app.use("/api/valoraciones", valoracionesRoutes);
 app.use("/api/notificaciones", notificacionesRoutes);
 app.use("/api/bloqueos", bloqueosRoutes);
 iniciarCron();
-console.log("📌 iniciarCron() INVOCADO");
+console.log("iniciarCron() INVOCADO");
 app.use("/api", authRoutes);
 
 // ==================== FRONTEND REACT ====================

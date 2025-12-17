@@ -27,7 +27,7 @@ const CitaSchema = new mongoose.Schema({
   }
 });
 
-// Índice para buscar solapamientos por fisioterapeuta rápidamente
+// Índice para buscar solapamientos por fisioterapeuta
 CitaSchema.index({ fisioterapeuta: 1, startAt: 1, endAt: 1 });
 
 module.exports = mongoose.model('Cita', CitaSchema);

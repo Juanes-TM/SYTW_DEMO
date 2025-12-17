@@ -11,7 +11,7 @@ const ValoracionSchema = new mongoose.Schema({
   fecha: { type: Date, default: Date.now }
 });
 
-// indice para buscar por fisio + especialidad rapidamente
+// indice para buscar por fisio + especialidad
 ValoracionSchema.index({ fisio: 1, especialidad: 1, fecha: -1 });
 
 module.exports = mongoose.model('Valoraciones', ValoracionSchema);

@@ -16,7 +16,6 @@ const BloqueoSchema = new mongoose.Schema({
   }
 });
 
-// Índice para búsquedas rápidas por fisio y fecha
 BloqueoSchema.index({ fisioterapeuta: 1, startAt: 1, endAt: 1 });
 
 module.exports = mongoose.model('Bloqueo', BloqueoSchema);

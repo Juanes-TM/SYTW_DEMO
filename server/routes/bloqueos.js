@@ -9,7 +9,7 @@ const Notificacion = require('../models/notificacion');
 // GET /api/bloqueos - Listar mis bloqueos (Fisio)
 router.get('/', auth, async (req, res) => {
   try {
-    // Si es fisio, ve los suyos. Si es admin, podría ver todos (opcional)
+    // Si es fisio, ve los suyos. Si es admin, podría ver todos
     const bloqueos = await Bloqueo.find({ fisioterapeuta: req.userId }).sort({ startAt: 1 });
     res.json(bloqueos);
   } catch (err) {
@@ -20,7 +20,7 @@ router.get('/', auth, async (req, res) => {
 // POST /api/bloqueos - Crear un bloqueo (Día completo)
 router.post('/', auth, async (req, res) => {
   try {
-    const { fecha, motivo } = req.body; // fecha en formato 'YYYY-MM-DD'
+    const { fecha, motivo } = req.body;
 
     if (!fecha) return res.status(400).json({ msg: 'Fecha obligatoria' });
 
@@ -62,8 +62,8 @@ router.post('/', auth, async (req, res) => {
     }).populate('paciente', 'nombre apellido');
 
     for (const cita of citasAfectadas) {
-      cita.estado = 'cancelada'; // Cambiar el estado de la cita
-      await cita.save(); // Guardar los cambios
+      cita.estado = 'cancelada';
+      await cita.save();
 
       // Crear y guardar la notificación de cancelación para el paciente
       await Notificacion.create({

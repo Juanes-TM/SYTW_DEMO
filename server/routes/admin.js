@@ -77,10 +77,9 @@ router.delete("/users/:id", auth, isAdmin, async (req, res) => {
   }
 });
 
-// Actualizar datos básicos de un usuario (nombre, email, teléfono, y AHORA especialidad)
+// Actualizar datos de un usuario (nombre, email, teléfono y especialidad)
 router.put("/users/:id", auth, isAdmin, async (req, res) => {
   try {
-    // Se extrae 'apellido' y el nuevo campo 'especialidad'
     const { nombre, apellido, email, telephone, especialidad } = req.body; 
 
     // LOGS DE DEPURACIÓN
@@ -99,7 +98,6 @@ router.put("/users/:id", auth, isAdmin, async (req, res) => {
     if (email !== undefined) updateData.email = email;
     if (telephone !== undefined) updateData.telephone = telephone;
 
-    // CORRECCIÓN: Permitir siempre actualizar especialidad cuando se envía
     if (especialidad !== undefined) {
         updateData.especialidad = especialidad === '' ? null : especialidad; 
     }
@@ -114,7 +112,7 @@ router.put("/users/:id", auth, isAdmin, async (req, res) => {
       return res.status(400).json({ msg: "El teléfono debe tener 9 dígitos" });
     }
     
-    // VALIDACIÓN DE DATOS OBLIGATORIOS (si se envían)
+    // VALIDACIÓN DE DATOS OBLIGATORIOS
     if (Object.keys(updateData).length === 0) {
         return res.status(400).json({ msg: "No se enviaron datos válidos para actualizar" });
     }
@@ -165,8 +163,8 @@ router.get("/stats", auth, isAdmin, async (req, res) => {
 router.get("/eventos-recientes", auth, isAdmin, async (req, res) => {
   try {
     const eventos = await EventLog.find()
-      .sort({ fecha: -1 })   // más recientes primero
-      .limit(20)             // máximo 20 eventos
+      .sort({ fecha: -1 })
+      .limit(20)
       .lean();
 
     res.status(200).json(eventos);

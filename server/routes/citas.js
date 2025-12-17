@@ -162,7 +162,6 @@ router.patch("/:id", auth, async (req, res) => {
     const cita = await Cita.findById(req.params.id);
     if (!cita) return res.status(404).json({ msg: "Cita no encontrada" });
 
-    // Motivo: solo admin o creador
     if (motivo) {
       if (req.userRole !== "admin" && cita.createdBy.user.toString() !== req.userId) {
         return res.status(403).json({ msg: "No autorizado" });
