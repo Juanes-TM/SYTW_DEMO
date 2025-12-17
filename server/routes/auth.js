@@ -9,12 +9,7 @@ const router = express.Router();
 const EventLog = require("../models/eventLog");
 
 
-<<<<<<< HEAD
-// Cargar configuración externa (ruta absoluta al backend_config.json)
-const configPath = './backend_config.json';
-=======
 const configPath = '/home/usuario/backend_config.json';
->>>>>>> DevFinal
 const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
 
 // -------------------------
