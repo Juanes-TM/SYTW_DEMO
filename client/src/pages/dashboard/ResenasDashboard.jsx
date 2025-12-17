@@ -14,7 +14,9 @@ export default function ResenasDashboard() {
     Maria: "/img/fisio4_avatar_crop.png",
     Javier: "/img/fisio2_avatar_crop.png",
     Sara: "/img/fisio6_avatar_crop.png",
+    fisio2: "/img/fisio2_avatar_crop.png",
     Fisio9: "/img/fisio6_avatar_crop.png"
+    
   };
 
   useEffect(() => {
