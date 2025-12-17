@@ -499,8 +499,7 @@ export default function ReservarCitaPage() {
         onConfirm={handleConfirmarCancelacion} 
         loading={cancelling} 
       />
-      
-      {/* MODAL DE CONFLICTO */}
+       
       <ConflictoModal
         isOpen={modalConflictoOpen}
         onClose={() => setModalConflictoOpen(false)}
