@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 
-const configPath = './backend_config.json';
+const configPath = '../backend_config.json';
 const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
 const JWT_SECRET = config.JWT_SECRET;
 

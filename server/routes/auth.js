@@ -9,7 +9,7 @@ const router = express.Router();
 const EventLog = require("../models/eventLog");
 
 
-const configPath = '/home/usuario/backend_config.json';
+const configPath = './backend_config.json';
 const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
 
 // -------------------------
