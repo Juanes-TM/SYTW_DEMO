@@ -2,7 +2,7 @@
 import '@testing-library/jest-dom';
 import { vi, beforeAll, afterAll } from 'vitest';
 
-// Silenciar ABSOLUTAMENTE TODO
+// Silenciar ABSOLUTAMENTE TODO 
 beforeAll(() => {
   vi.spyOn(console, 'log').mockImplementation(() => {});
   //vi.spyOn(console, 'error').mockImplementation(() => {});
