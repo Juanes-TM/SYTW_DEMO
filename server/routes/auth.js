@@ -7,9 +7,10 @@ const fs = require('fs');
 const crypto = require('crypto');
 const router = express.Router();
 const EventLog = require("../models/eventLog");
+const path = require('path');
 
 
-const configPath = './backend_config.json';
+const configPath = path.join(__dirname, '../backend_config.json');
 const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
 
 // -------------------------
